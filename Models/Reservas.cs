@@ -1,6 +1,10 @@
 ﻿namespace HOTEL360___Trabalho_final.Models{
 using System.ComponentModel.DataAnnotations.Schema;
     public class Reservas {
+
+        /// <summary>
+        /// Construtor da classe Reservas 
+        /// </summary>
         public Reservas() {
             ListaReservasServicos = new HashSet<Reservas_Servicos>();
             ListaRececcionistas = new HashSet<Reccecionistas>();

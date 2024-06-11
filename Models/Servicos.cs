@@ -5,6 +5,9 @@ namespace HOTEL360___Trabalho_final.Models
 {
     public class Servicos {
 
+        /// <summary>
+        /// Construtor da classe Servicos
+        /// </summary>
         public Servicos() {
             ListaReservasServicos = new HashSet<Reservas_Servicos>();
         }

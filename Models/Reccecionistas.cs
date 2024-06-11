@@ -1,7 +1,12 @@
 ﻿namespace HOTEL360___Trabalho_final.Models
 {
-    public class Reccecionistas  {
-
+    /// <summary>
+    /// Reccecionistas é uma extensão de Utilizadores 
+    /// </summary>
+    public class Reccecionistas : Utilizadores {
+        /// <summary>
+        /// Construtor da classe Receccionistas
+        /// </summary>
         public Reccecionistas()  {
             ListaReservas = new HashSet<Reservas>();
         }

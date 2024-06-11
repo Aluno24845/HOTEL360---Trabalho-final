@@ -2,6 +2,9 @@
 {
     public class Quartos {
 
+        /// <summary>
+        /// Construtor da classe Quartos 
+        /// </summary>
         public Quartos() {
             ListaReservas = new HashSet<Reservas>();
         }

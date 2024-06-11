@@ -1,6 +1,13 @@
 ﻿namespace HOTEL360___Trabalho_final.Models
 {
-    public class Hospedes {
+    /// <summary>
+    /// Hospedes é uma extensão de Utilizadores 
+    /// </summary>
+    public class Hospedes : Utilizadores{
+
+        /// <summary>
+        /// Construtor da classe Hospedes
+        /// </summary>
         public Hospedes() {
             ListaReservas = new HashSet<Reservas>();
         }
