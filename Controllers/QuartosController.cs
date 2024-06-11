@@ -10,33 +10,27 @@ using HOTEL360___Trabalho_final.Models;
 
 namespace HOTEL360___Trabalho_final.Controllers
 {
-    public class QuartosController : Controller
-    {
+    public class QuartosController : Controller {
         private readonly ApplicationDbContext _context;
 
-        public QuartosController(ApplicationDbContext context)
-        {
+        public QuartosController(ApplicationDbContext context) {
             _context = context;
         }
 
         // GET: Quartos
-        public async Task<IActionResult> Index()
-        {
+        public async Task<IActionResult> Index() {
             return View(await _context.Quartos.ToListAsync());
         }
 
         // GET: Quartos/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
+        public async Task<IActionResult> Details(int? id) {
+            if (id == null) {
                 return NotFound();
             }
 
             var quartos = await _context.Quartos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (quartos == null)
-            {
+            if (quartos == null) {
                 return NotFound();
             }
 
@@ -44,8 +38,8 @@ namespace HOTEL360___Trabalho_final.Controllers
         }
 
         // GET: Quartos/Create
-        public IActionResult Create()
-        {
+        public IActionResult Create() {
+            // a única ação desta função é mostrar a View puando quero iniciar a adição de um Quarto
             return View();
         }
 
@@ -54,28 +48,32 @@ namespace HOTEL360___Trabalho_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Capacidade,Preco,Descricao,Imagem")] Quartos quartos)
-        {
-            if (ModelState.IsValid)
-            {
+        public async Task<IActionResult> Create([Bind("Id")] Quartos quartos, IFormFile ImagemLogo) {
+            
+            //avalia se os dados que chegam da View estão de acordo com o Model
+            if (ModelState.IsValid) {
+
+                //adiciona os dados vindos da View à BD 
                 _context.Add(quartos);
+                //efetua COMMIT na BD
                 await _context.SaveChangesAsync();
+                //redireciona o utilizador para a página Index 
                 return RedirectToAction(nameof(Index));
             }
+
+            //se chegou aqui é porque algo não correu bem
+            //volta à View com os dados fornecidos pela View 
             return View(quartos);
         }
 
         // GET: Quartos/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
+        public async Task<IActionResult> Edit(int? id)  {
+            if (id == null) {
                 return NotFound();
             }
 
             var quartos = await _context.Quartos.FindAsync(id);
-            if (quartos == null)
-            {
+            if (quartos == null) {
                 return NotFound();
             }
             return View(quartos);
@@ -86,28 +84,21 @@ namespace HOTEL360___Trabalho_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Capacidade,Preco,Descricao,Imagem")] Quartos quartos)
-        {
-            if (id != quartos.Id)
-            {
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Capacidade,Preco,Descricao,Imagem")] Quartos quartos) {
+            if (id != quartos.Id)  {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
+            if (ModelState.IsValid) {
+                try {
                     _context.Update(quartos);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuartosExists(quartos.Id))
-                    {
+                catch (DbUpdateConcurrencyException)   {
+                    if (!QuartosExists(quartos.Id)) {
                         return NotFound();
                     }
-                    else
-                    {
+                    else   {
                         throw;
                     }
                 }
@@ -117,17 +108,14 @@ namespace HOTEL360___Trabalho_final.Controllers
         }
 
         // GET: Quartos/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
+        public async Task<IActionResult> Delete(int? id) {
+            if (id == null) {
                 return NotFound();
             }
 
             var quartos = await _context.Quartos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (quartos == null)
-            {
+            if (quartos == null) {
                 return NotFound();
             }
 
@@ -137,11 +125,9 @@ namespace HOTEL360___Trabalho_final.Controllers
         // POST: Quartos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+        public async Task<IActionResult> DeleteConfirmed(int id) {
             var quartos = await _context.Quartos.FindAsync(id);
-            if (quartos != null)
-            {
+            if (quartos != null) {
                 _context.Quartos.Remove(quartos);
             }
 
@@ -149,8 +135,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool QuartosExists(int id)
-        {
+        private bool QuartosExists(int id) {
             return _context.Quartos.Any(e => e.Id == id);
         }
     }
