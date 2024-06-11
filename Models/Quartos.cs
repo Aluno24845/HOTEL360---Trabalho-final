@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace HOTEL360___Trabalho_final.Models{
     /// <summary>
@@ -18,6 +19,12 @@ namespace HOTEL360___Trabalho_final.Models{
         /// </summary>
         [Key] 
         public int Id { get; set; }
+
+        /// <summary>
+        /// Nome do Quarto 
+        /// </summary>
+        [StringLength(100)]
+        public string Nome { get; set; }
 
         /// <summary>
         /// Capacidade do Quarto

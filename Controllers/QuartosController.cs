@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
 
-namespace HOTEL360___Trabalho_final.Controllers
-{
+namespace HOTEL360___Trabalho_final.Controllers{
     public class QuartosController : Controller {
+
         private readonly ApplicationDbContext _context;
 
         public QuartosController(ApplicationDbContext context) {
@@ -38,8 +38,10 @@ namespace HOTEL360___Trabalho_final.Controllers
         }
 
         // GET: Quartos/Create
+        [HttpGet] // facultativo, pois esta função,
+                  // por predefinição, já reage ao HTTP GET
         public IActionResult Create() {
-            // a única ação desta função é mostrar a View puando quero iniciar a adição de um Quarto
+            // a única ação desta função é mostrar a View quando quero iniciar a adição de um Quarto
             return View();
         }
 
@@ -48,13 +50,13 @@ namespace HOTEL360___Trabalho_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] Quartos quartos, IFormFile ImagemLogo) {
+        public async Task<IActionResult> Create([Bind("Id,Nome,Capacidade,Preco,Descricao,Imagem")] Quartos quarto, IFormFile ImagemLogo) {
             
             //avalia se os dados que chegam da View estão de acordo com o Model
             if (ModelState.IsValid) {
 
                 //adiciona os dados vindos da View à BD 
-                _context.Add(quartos);
+                _context.Add(quarto);
                 //efetua COMMIT na BD
                 await _context.SaveChangesAsync();
                 //redireciona o utilizador para a página Index 
@@ -63,7 +65,7 @@ namespace HOTEL360___Trabalho_final.Controllers
 
             //se chegou aqui é porque algo não correu bem
             //volta à View com os dados fornecidos pela View 
-            return View(quartos);
+            return View(quarto);
         }
 
         // GET: Quartos/Edit/5
@@ -84,7 +86,7 @@ namespace HOTEL360___Trabalho_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Capacidade,Preco,Descricao,Imagem")] Quartos quartos) {
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Capacidade,Preco,Descricao,Imagem")] Quartos quartos) {
             if (id != quartos.Id)  {
                 return NotFound();
             }
