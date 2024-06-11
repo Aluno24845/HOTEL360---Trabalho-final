@@ -7,6 +7,9 @@ namespace HOTEL360___Trabalho_final.Models
     [PrimaryKey(nameof(ReservaFK), nameof(ServicoFK))] // PK composta, na EF > 6.0
     public class Reservas_Servicos {
                 
+        /// <summary>
+        /// Quantidade de Serviços associados à Reserva
+        /// </summary>
         public int Quantidade { get; set; }
 
 

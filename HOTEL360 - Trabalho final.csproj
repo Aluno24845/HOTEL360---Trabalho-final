@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-HOTEL360___Trabalho_final-d196a029-2d8d-46fa-a3dd-0946e97088f6</UserSecretsId>
     <RootNamespace>HOTEL360___Trabalho_final</RootNamespace>

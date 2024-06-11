@@ -12,6 +12,9 @@
             ListaReservas = new HashSet<Reservas>();
         }
 
+        /// <summary>
+        /// NIF do Hospede
+        /// </summary>
         public string NIF { get; set; }
 
         /* ************************************************
@@ -19,6 +22,9 @@
         * *********************************************** */
 
         // relacionamento do tipo N-M, SEM atributos do relacionamento
+        /// <summary>
+        /// Lista das Reservas associadas ao Hospede
+        /// </summary>
         public ICollection<Reservas> ListaReservas { get; set; }
         
     }

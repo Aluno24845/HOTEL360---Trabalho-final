@@ -13,11 +13,30 @@ namespace HOTEL360___Trabalho_final.Models{
             ListaHospedes = new HashSet<Hospedes>();
         }
 
-        [Key] //PK
+        /// <summary>
+        /// Chave Primária 
+        /// </summary>
+        [Key] 
         public int Id { get; set; }
+
+        /// <summary>
+        /// Valor já pago pelo Hospede
+        /// </summary>
         public decimal ValorPago { get; set; }
+
+        /// <summary>
+        /// Data em que foi feita a reserva
+        /// </summary>
         public DateTime DataReserva {  get; set; }
+
+        /// <summary>
+        /// Data de entrada no Quarto
+        /// </summary>
         public DateTime DataCheckIN { get; set; }
+
+        /// <summary>
+        /// Data de saída do Quarto
+        /// </summary>
         public DateTime DataCheckOUT { get; set; }
 
         /* ************************************************
@@ -31,9 +50,15 @@ namespace HOTEL360___Trabalho_final.Models{
 
 
         // relacionamento do tipo N-M, SEM atributos do relacionamento
+        /// <summary>
+        /// Lista dos Reccecionistas associadas à Reserva
+        /// </summary>
         public ICollection<Reccecionistas> ListaRececcionistas { get; set; }
 
         // relacionamento do tipo N-M, SEM atributos do relacionamento
+        /// <summary>
+        /// Lista dos Hospedes associados à Reserva
+        /// </summary>
         public ICollection<Hospedes> ListaHospedes { get; set; }
 
         // relacionamento do tipo N-M, COM atributos do relacionamento
@@ -41,6 +66,9 @@ namespace HOTEL360___Trabalho_final.Models{
         // mas a tabela no 'meio' do relacionamento
         // vamos representar o relacionamento N-M à custa
         // de dois relacionamentos do tipo 1-N
+        /// <summary>
+        /// Lista das Reservas_Servicos associadas à Reserva
+        /// </summary>
         public ICollection<Reservas_Servicos> ListaReservasServicos { get; set; }
 
     }

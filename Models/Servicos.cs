@@ -12,10 +12,25 @@ namespace HOTEL360___Trabalho_final.Models
             ListaReservasServicos = new HashSet<Reservas_Servicos>();
         }
 
-        [Key] //PK
+        /// <summary>
+        /// Chave Primária
+        /// </summary>
+        [Key] 
         public int Id { get; set; }
+
+        /// <summary>
+        /// Nome do Serviço
+        /// </summary>
         public string Nome { get; set; }
+
+        /// <summary>
+        /// Descrição do Serviço
+        /// </summary>
         public string Descricao {  get; set; }
+
+        /// <summary>
+        /// Preço do Serviço
+        /// </summary>
         public decimal Preco { get; set; }
 
         /* ************************************************
@@ -27,6 +42,9 @@ namespace HOTEL360___Trabalho_final.Models
         // mas a tabela no 'meio' do relacionamento
         // vamos representar o relacionamento N-M à custa
         // de dois relacionamentos do tipo 1-N
+        /// <summary>
+        /// Lista das Reservas_Servicos associadas ao Servico
+        /// </summary>
         public ICollection<Reservas_Servicos> ListaReservasServicos { get; set; }
 
     }

@@ -11,6 +11,9 @@
             ListaReservas = new HashSet<Reservas>();
         }
 
+        /// <summary>
+        /// Numero do Reccecionista
+        /// </summary>
         public int NumReccecionista { get; set; }
 
         /* ************************************************
@@ -18,6 +21,9 @@
         * *********************************************** */
 
         // relacionamento do tipo N-M, SEM atributos do relacionamento
+        /// <summary>
+        /// Lista das Reservas associadas ao Reccecionista
+        /// </summary>
         public ICollection<Reservas> ListaReservas { get; set; }
 
     }

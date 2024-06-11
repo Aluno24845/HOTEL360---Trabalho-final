@@ -14,13 +14,37 @@ namespace HOTEL360___Trabalho_final.Data{
         }
 
         // definição das 'tabelas'
+        /// <summary>
+        /// Tabela Utilizadores
+        /// </summary>
         public DbSet<Utilizadores> Utilizadores { get; set; }
+        /// <summary>
+        /// Tabela Hospedes
+        /// </summary>
         public DbSet<Hospedes> Hospedes { get; set; }
+        /// <summary>
+        /// Tabela Gerentes
+        /// </summary>
         public DbSet<Gerentes> Gerentes { get; set; }
+        /// <summary>
+        /// Tabela Reccecionistas
+        /// </summary>
         public DbSet<Reccecionistas> Reccecionistas { get; set; }
+        /// <summary>
+        /// Tabela Quartos
+        /// </summary>
         public DbSet<Quartos> Quartos { get; set; }
+        /// <summary>
+        /// Tabela Reservas_Servicos
+        /// </summary>
         public DbSet<Reservas_Servicos> ReservasServicos { get; set; }
+        /// <summary>
+        /// Tabela Reservas
+        /// </summary>
         public DbSet<Reservas> Reservas { get; set; }
+        /// <summary>
+        /// Tabela Servicos
+        /// </summary>
         public DbSet<Servicos> Servicos { get; set; }
 
     }
