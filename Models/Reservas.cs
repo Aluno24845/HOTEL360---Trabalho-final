@@ -1,5 +1,7 @@
-﻿namespace HOTEL360___Trabalho_final.Models{
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HOTEL360___Trabalho_final.Models{
     public class Reservas {
 
         /// <summary>
@@ -11,6 +13,7 @@ using System.ComponentModel.DataAnnotations.Schema;
             ListaHospedes = new HashSet<Hospedes>();
         }
 
+        [Key] //PK
         public int Id { get; set; }
         public decimal ValorPago { get; set; }
         public DateTime DataReserva {  get; set; }

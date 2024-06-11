@@ -1,8 +1,10 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace HOTEL360___Trabalho_final.Models
 {
     public class Utilizadores {
+
+        [Key] //PK 
         public int Id { get; set; }
 
         public string Nome { get; set; }

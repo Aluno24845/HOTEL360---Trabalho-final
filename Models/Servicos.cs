@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HOTEL360___Trabalho_final.Models
 {
@@ -12,6 +12,7 @@ namespace HOTEL360___Trabalho_final.Models
             ListaReservasServicos = new HashSet<Reservas_Servicos>();
         }
 
+        [Key] //PK
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Descricao {  get; set; }

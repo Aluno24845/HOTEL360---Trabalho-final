@@ -1,4 +1,6 @@
-﻿namespace HOTEL360___Trabalho_final.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HOTEL360___Trabalho_final.Models
 {
     public class Quartos {
 
@@ -9,6 +11,7 @@
             ListaReservas = new HashSet<Reservas>();
         }
 
+        [Key] // PK 
         public int Id { get; set; }
 
         public int Capacidade { get; set; }
