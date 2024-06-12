@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<HOTEL360___Trabalho_final.Models.Quartos>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Início";
 }
 
-<h1>Index</h1>
+<h1>Lista de Quartos</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Novo Quarto</a>
 </p>
 <table class="table">
     <thead>
@@ -46,7 +46,19 @@
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Imagem)
+                    @* vou mudar o nome da imagem para a imagem,
+                propriamente dita
+                *@
+
+                    <img src="~/Imagens/@Html.DisplayFor(modelItem => item.Imagem)"
+                         alt="logo do curso @Html.DisplayFor(modelItem => item.Nome)"
+                         title="@Html.DisplayFor(modelItem => item.Nome)"
+                         width="100px" />
+                    @*outra forma de mostrar a imagem, usando a variável do ForEach*@
+                    <img src="~/Imagens/@item.Imagem"
+                         alt="logo do curso @item.Nome"
+                         title="@item.Nome"
+                         width="100px" />
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
