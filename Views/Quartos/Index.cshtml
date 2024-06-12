@@ -51,12 +51,12 @@
                 *@
 
                     <img src="~/Imagens/@Html.DisplayFor(modelItem => item.Imagem)"
-                         alt="logo do curso @Html.DisplayFor(modelItem => item.Nome)"
+                         alt="imagem do quarto @Html.DisplayFor(modelItem => item.Nome)"
                          title="@Html.DisplayFor(modelItem => item.Nome)"
                          width="100px" />
                     @*outra forma de mostrar a imagem, usando a variável do ForEach*@
                     <img src="~/Imagens/@item.Imagem"
-                         alt="logo do curso @item.Nome"
+                         alt="imagem do quarto @item.Nome"
                          title="@item.Nome"
                          width="100px" />
             </td>
