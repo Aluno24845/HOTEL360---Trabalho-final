@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace HOTEL360___Trabalho_final.Models{
     /// <summary>
@@ -20,6 +21,12 @@ namespace HOTEL360___Trabalho_final.Models{
         public int Id { get; set; }
 
         /// <summary>
+        /// Nome do Quarto 
+        /// </summary>
+        [StringLength(100)]
+        public string Nome { get; set; }
+
+        /// <summary>
         /// Capacidade do Quarto
         /// </summary>
         public int Capacidade { get; set; }
@@ -37,7 +44,8 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Nome do ficheiro que contém a imagem do Quarto
         /// </summary>
-        public string Imagem { get; set; }
+        [StringLength(50)] // define o tamanho máximo como 50 caracteres
+        public string? Imagem { get; set; } // o ? torna o preenchimento facultativo
 
         /* ************************************************
        * Vamos criar as Relações (FKs) com outras tabelas

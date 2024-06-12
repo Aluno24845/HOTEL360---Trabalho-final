@@ -1,17 +1,31 @@
 ﻿@model HOTEL360___Trabalho_final.Models.Quartos
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Adicionar Quarto";
 }
 
-<h1>Create</h1>
+<h1>Adicionar Quarto</h1>
 
 <h4>Quartos</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        @* este objeto irá levar os conteúdos do formulário para o SERVIDOR
+        - o atributo 'method' define como os dados são enviados
+        - o atributo 'enctype' define que vamos enviar, também, ficheiros
+        *@
+        <form asp-action="Create"
+              method="post"
+              enctype="multipart/form-data">
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="Nome" class="control-label"></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Capacidade" class="control-label"></label>
                 <input asp-for="Capacidade" class="form-control" />
@@ -22,25 +36,33 @@
                 <input asp-for="Preco" class="form-control" />
                 <span asp-validation-for="Preco" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Descricao" class="control-label"></label>
                 <input asp-for="Descricao" class="form-control" />
                 <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Imagem" class="control-label"></label>
-                <input asp-for="Imagem" class="form-control" />
-                <span asp-validation-for="Imagem" class="text-danger"></span>
+                @* File Upload
+                - não esquecer definir:
+                - 'accept'' para ajudar os utilizadores a escolher o tipo certo de ficheiro
+                - 'name' para acederem ao ficheiro no Servidor
+                *@
+                <input type="file" name="ImagemLogo" accept=".png,.jpg,.jpeg" class="form-control" />
             </div>
+            <br/>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Adicionar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Regressar à listagem dos Quartos</a>
 </div>
 
 @section Scripts {
