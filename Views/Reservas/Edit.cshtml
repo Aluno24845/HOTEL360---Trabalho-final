@@ -1,0 +1,54 @@
+﻿@model HOTEL360___Trabalho_final.Models.Reservas
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Reservas</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="ValorPago" class="control-label"></label>
+                <input asp-for="ValorPago" class="form-control" />
+                <span asp-validation-for="ValorPago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataReserva" class="control-label"></label>
+                <input asp-for="DataReserva" class="form-control" />
+                <span asp-validation-for="DataReserva" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataCheckIN" class="control-label"></label>
+                <input asp-for="DataCheckIN" class="form-control" />
+                <span asp-validation-for="DataCheckIN" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataCheckOUT" class="control-label"></label>
+                <input asp-for="DataCheckOUT" class="form-control" />
+                <span asp-validation-for="DataCheckOUT" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="QuartoFK" class="control-label"></label>
+                <select asp-for="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK"></select>
+                <span asp-validation-for="QuartoFK" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

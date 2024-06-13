@@ -62,7 +62,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Capacidade,Preco,Descricao,Imagem")] Quartos quarto, IFormFile ImagemLogo) {
+        public async Task<IActionResult> Create([Bind("Id,Nome,Capacidade,Preco,PrecoAux,Descricao,Imagem")] Quartos quarto, IFormFile ImagemLogo) {
 
             /* Algoritmo
           * 1- há ficheiro?
@@ -124,42 +124,60 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
             //avalia se os dados que chegam da View estão de acordo com o Model
             if (ModelState.IsValid) {
-
-                //adiciona os dados vindos da View à BD 
-                _context.Add(quarto);
-                //efetua COMMIT na BD
-                await _context.SaveChangesAsync();
-
-                // se há ficheiro de imagem,
-                // vamos guardar no disco rígido do servidor
-                if (haImagem)
+                                
+                try
                 {
-                    // determinar onde se vai guardar a imagem
-                    string nomePastaOndeGuardarImagem =
-                       _webHostEnvironment.WebRootPath;
-                    // já sei o caminho até à pasta wwwroot
-                    // especifico onde vou guardar a imagem
-                    nomePastaOndeGuardarImagem =
-                       Path.Combine(nomePastaOndeGuardarImagem, "Imagens");
-                    // e, existe a pasta 'Imagens'?
-                    if (!Directory.Exists(nomePastaOndeGuardarImagem))
+                    //transferir o valor de PrecoAux para Preco
+                    quarto.Preco = Convert.ToDecimal(quarto.PrecoAux.Replace('.', ','));
+
+                    //adiciona os dados vindos da View à BD 
+                    _context.Add(quarto);
+                    //efetua COMMIT na BD
+                    await _context.SaveChangesAsync();
+
+                    // se há ficheiro de imagem,
+                    // vamos guardar no disco rígido do servidor
+                    if (haImagem)
                     {
-                        Directory.CreateDirectory(nomePastaOndeGuardarImagem);
+                        // determinar onde se vai guardar a imagem
+                        string nomePastaOndeGuardarImagem =
+                           _webHostEnvironment.WebRootPath;
+                        // já sei o caminho até à pasta wwwroot
+                        // especifico onde vou guardar a imagem
+                        nomePastaOndeGuardarImagem =
+                           Path.Combine(nomePastaOndeGuardarImagem, "Imagens");
+                        // e, existe a pasta 'Imagens'?
+                        if (!Directory.Exists(nomePastaOndeGuardarImagem))
+                        {
+                            Directory.CreateDirectory(nomePastaOndeGuardarImagem);
+                        }
+                        // juntar o nome do ficheiro à sua localização
+                        string nomeFinalDaImagem =
+                           Path.Combine(nomePastaOndeGuardarImagem, nomeImagem);
+
+                        // guardar a imagem no disco rigído
+                        using var stream = new FileStream(
+                           nomeFinalDaImagem, FileMode.Create
+                           );
+                        await ImagemLogo.CopyToAsync(stream);
                     }
-                    // juntar o nome do ficheiro à sua localização
-                    string nomeFinalDaImagem =
-                       Path.Combine(nomePastaOndeGuardarImagem, nomeImagem);
 
-                    // guardar a imagem no disco rigído
-                    using var stream = new FileStream(
-                       nomeFinalDaImagem, FileMode.Create
-                       );
-                    await ImagemLogo.CopyToAsync(stream);
+                    //redireciona o utilizador para a página Index 
+                    return RedirectToAction(nameof(Index));
                 }
+                catch (Exception ex)
+                {
+                    // se cheguei aqui é pq aconteceu um problema
+                    // crítico. TEM de ser tratado.
+                    //    - devolver o controlo ao utilizador
+                    //    - corrigir o erro
+                    //    - escrever os dados do erro num LOG
+                    //    - escrever os dados do erro numa tabela da BD
+                    //    - etc.
+                    throw;
+                }            
 
-
-                //redireciona o utilizador para a página Index 
-                return RedirectToAction(nameof(Index));
+            
             }
 
             //se chegou aqui é porque algo não correu bem
@@ -227,6 +245,10 @@ namespace HOTEL360___Trabalho_final.Controllers{
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id) {
+
+            // Nas ações de DELETE também é crucial a existência
+            // de Try Catch 
+
             var quartos = await _context.Quartos.FindAsync(id);
             if (quartos != null) {
                 _context.Quartos.Remove(quartos);
