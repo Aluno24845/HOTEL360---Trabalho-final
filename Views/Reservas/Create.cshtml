@@ -1,21 +1,25 @@
 ﻿@model HOTEL360___Trabalho_final.Models.Reservas
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Adicionar Reserva";
 }
 
-<h1>Create</h1>
+<h1>Adicionar uma nova Reserva</h1>
 
-<h4>Reservas</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ValorPago" class="control-label"></label>
-                <input asp-for="ValorPago" class="form-control" />
-                <span asp-validation-for="ValorPago" class="text-danger"></span>
+                @*
+                Vamos usar a variável auxiliar para ler os dados
+                do VALORPAGO para evitar os constrangimentos do
+                processamento de vars. do tipo DECIMAL
+                *@
+                <label asp-for="ValorPagoAux" class="control-label"></label>
+                <input asp-for="ValorPagoAux" class="form-control" />
+                <span asp-validation-for="ValorPagoAux" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DataReserva" class="control-label"></label>
@@ -37,14 +41,15 @@
                 <select asp-for="QuartoFK" class ="form-control" asp-items="ViewBag.QuartoFK"></select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <br />
+                <input type="submit" value="Adicionar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Regressar à Listagem das Reservas</a>
 </div>
 
 @section Scripts {
