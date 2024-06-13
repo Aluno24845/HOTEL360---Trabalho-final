@@ -20,6 +20,17 @@ namespace HOTEL360___Trabalho_final.Models{
         public int Id { get; set; }
 
         /// <summary>
+        /// atributo auxiliar para ler o Valor pago na inteface
+        /// </summary>
+        [NotMapped] // não representa este atributo na BD
+        [StringLength(8)]
+        [Display(Name = "Valor Pago")]
+        [Required(ErrorMessage = "O {0} é obrigatória.")]
+        [RegularExpression("[0-9]+[.,]?[0-9]{0,2}",
+           ErrorMessage = "só aceita digitos numéricos, separados por . ou por ,")]
+        public string ValorPagoAux { get; set; }
+
+        /// <summary>
         /// Valor já pago pelo Hospede
         /// </summary>
         public decimal ValorPago { get; set; }

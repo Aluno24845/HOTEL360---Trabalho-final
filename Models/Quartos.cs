@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
 
 namespace HOTEL360___Trabalho_final.Models{
@@ -30,6 +31,17 @@ namespace HOTEL360___Trabalho_final.Models{
         /// Capacidade do Quarto
         /// </summary>
         public int Capacidade { get; set; }
+
+        /// <summary>
+        /// atributo auxiliar para ler o valor do Preco na inteface
+        /// </summary>
+        [NotMapped] // não representa este atributo na BD
+        [StringLength(8)]
+        [Display(Name = "Preço")]
+        [Required(ErrorMessage = "O {0} é obrigatória.")]
+        [RegularExpression("[0-9]+[.,]?[0-9]{0,2}",
+           ErrorMessage = "só aceita digitos numéricos, separados por . ou por ,")]
+        public string PrecoAux { get; set; }
 
         /// <summary>
         /// Preço do Quarto por noite

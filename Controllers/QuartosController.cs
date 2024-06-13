@@ -62,7 +62,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Capacidade,Preco,Descricao,Imagem")] Quartos quarto, IFormFile ImagemLogo) {
+        public async Task<IActionResult> Create([Bind("Id,Nome,Capacidade,Preco,PrecoAux,Descricao,Imagem")] Quartos quarto, IFormFile ImagemLogo) {
 
             /* Algoritmo
           * 1- há ficheiro?
@@ -124,6 +124,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
             //avalia se os dados que chegam da View estão de acordo com o Model
             if (ModelState.IsValid) {
+
+                //transferir o valor de PrecoAux para Preco
+                quarto.Preco = Convert.ToDecimal(quarto.PrecoAux.Replace('.', ','));
 
                 //adiciona os dados vindos da View à BD 
                 _context.Add(quarto);

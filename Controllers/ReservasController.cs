@@ -63,15 +63,19 @@ namespace HOTEL360___Trabalho_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ValorPago,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK")] Reservas reservas)
+        public async Task<IActionResult> Create([Bind("Id,ValorPago,ValorPagoAux,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK")] Reservas reserva)
         {
             if (ModelState.IsValid) {
-                _context.Add(reservas);
+
+                //transferir o valor de VAlorPagoAux para ValorPago
+                reserva.ValorPago = Convert.ToDecimal(reserva.ValorPagoAux.Replace('.', ','));
+
+                _context.Add(reserva);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reservas.QuartoFK);
-            return View(reservas);
+            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reserva.QuartoFK);
+            return View(reserva);
         }
 
         // GET: Reservas/Edit/5
