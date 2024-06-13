@@ -1,4 +1,6 @@
-﻿namespace HOTEL360___Trabalho_final.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HOTEL360___Trabalho_final.Models
 {
     /// <summary>
     /// Reccecionistas é uma extensão de Utilizadores 
@@ -14,6 +16,7 @@
         /// <summary>
         /// Numero do Reccecionista
         /// </summary>
+        [Display(Name = "Número do Reccecionista")]
         public int NumReccecionista { get; set; }
 
         /* ************************************************
