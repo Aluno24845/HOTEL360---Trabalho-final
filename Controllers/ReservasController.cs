@@ -67,14 +67,33 @@ namespace HOTEL360___Trabalho_final.Controllers
         {
             if (ModelState.IsValid) {
 
-                //transferir o valor de VAlorPagoAux para ValorPago
-                reserva.ValorPago = Convert.ToDecimal(reserva.ValorPagoAux.Replace('.', ','));
+                try  {
 
-                _context.Add(reserva);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    //transferir o valor de VAlorPagoAux para ValorPago
+                    reserva.ValorPago = Convert.ToDecimal(reserva.ValorPagoAux.Replace('.', ','));
+
+                    //adiciona os dados vindos da View à BD
+                    _context.Add(reserva);
+                    //efetua COMMIT na BD
+                    await _context.SaveChangesAsync();
+
+                    //redireciona o utilizador para a página Index
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)  {
+                    // se cheguei aqui é pq aconteceu um problema
+                    // crítico. TEM de ser tratado.
+                    //    - devolver o controlo ao utilizador
+                    //    - corrigir o erro
+                    //    - escrever os dados do erro num LOG
+                    //    - escrever os dados do erro numa tabela da BD
+                    //    - etc.
+                    throw;
+                }
+                
             }
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reserva.QuartoFK);
+            // se chego aqui é pq alguma coisa correu mal
+            ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Id), "Id", "Id", reserva.QuartoFK);
             return View(reserva);
         }
 
@@ -145,8 +164,11 @@ namespace HOTEL360___Trabalho_final.Controllers
         // POST: Reservas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+        public async Task<IActionResult> DeleteConfirmed(int id) {
+
+            // Nas ações de DELETE também é crucial a existência
+            // de Try Catch 
+
             var reservas = await _context.Reservas.FindAsync(id);
             if (reservas != null)  {
                 _context.Reservas.Remove(reservas);
