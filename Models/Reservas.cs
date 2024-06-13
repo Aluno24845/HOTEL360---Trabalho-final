@@ -27,16 +27,25 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Data em que foi feita a reserva
         /// </summary>
+        [Display(Name = "Data da reserva")]
+        [DisplayFormat(ApplyFormatInEditMode = true,
+                     DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime DataReserva {  get; set; }
 
         /// <summary>
         /// Data de entrada no Quarto
         /// </summary>
+        [Display(Name = "Data do Check-IN")]
+        [DisplayFormat(ApplyFormatInEditMode = true,
+                     DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime DataCheckIN { get; set; }
 
         /// <summary>
         /// Data de saída do Quarto
         /// </summary>
+        [Display(Name = "Data do Check-OUT")]
+        [DisplayFormat(ApplyFormatInEditMode = true,
+                     DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime DataCheckOUT { get; set; }
 
         /* ************************************************
