@@ -35,6 +35,10 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Data de nascimento do Utilizador
         /// </summary>
+        [Display(Name = "Data de Nascimento")]
+        [DataType(DataType.Date)] // informa a View de como deve tratar este atributo
+        [DisplayFormat(ApplyFormatInEditMode = true,
+                     DataFormatString = "{0:dd-MM-yyyy}")]
         public DateOnly DataNascimento { get; set; }
     }
 }
