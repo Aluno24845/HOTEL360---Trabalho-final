@@ -7,9 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // ******************************************************
 
-// localização da Base de Dados
+// localizaÃ§Ã£o da Base de Dados
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-// referência ao Sistema de Gestão de Bases de Dados (SGBD)
+// referÃªncia ao Sistema de GestÃ£o de Bases de Dados (SGBD)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
