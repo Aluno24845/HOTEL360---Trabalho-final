@@ -160,8 +160,7 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
                 // da autenticação na base de dados
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
-                if (result.Succeeded)
-                {
+                if (result.Succeeded) {
                     // houve sucesso na criação da conta de autenticação
                     _logger.LogInformation("O utilizador criou uma nova conta com password.");
 
@@ -222,13 +221,11 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
                     // SÓ APÓS a aceitação desta tarefa o utilizador pode
                     // entrar na app
                     await _emailSender.SendEmailAsync(Input.Email, "Confirme o seu email",
-                        $"Por favor, confirme a sua conta <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
-
-
+                        $"Por favor, confirme a sua conta by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicando aqui</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegistoConfirmado", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else
                     {
@@ -236,7 +233,7 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
                 }
-                foreach (var error in result.Errors)
+            foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
