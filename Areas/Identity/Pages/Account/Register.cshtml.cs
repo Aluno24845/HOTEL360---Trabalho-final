@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -30,18 +31,28 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+
+        /// <summary>
+        /// referência à BD do projeto
+        /// </summary>
+        private readonly ApplicationDbContext _context;
+
+
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)  {
+            IEmailSender emailSender,
+          ApplicationDbContext context
+         ){
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         /// <summary>
@@ -138,8 +149,7 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
 
 
             // os dados recebidos são válidos?
-            if (ModelState.IsValid)
-            {
+            if (ModelState.IsValid)  {
 
                 var user = CreateUser();
 
@@ -154,6 +164,49 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
                 {
                     // houve sucesso na criação da conta de autenticação
                     _logger.LogInformation("O utilizador criou uma nova conta com password.");
+
+
+                    // **********************************************
+                    // vamos escrever na BD os dados do Hospede
+                    // na prática, quero guardar na BD os
+                    // dados do atributo 'input.Hospede'
+                    // **********************************************
+
+                    // vamos guardar o valor do atributo
+                    // que fará a 'ponte' entre a BD
+                    // de autenticação e a BD do 'negócio'
+                    Input.Hospede.UserId = user.Id;
+
+                    try
+                    {
+                        // guardar os dados na BD
+                        _context.Add(Input.Hospede);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        // há que registar os dados do que
+                        // aconteceu mal, para se reparar
+                        // o problema
+
+                        // se cheguei aqui é pq não se conseguiu
+                        // escrever os dados do Hospede na BD
+                        // há que tomar uma decisão sobre o que fazer...
+
+                        // Sugestão:
+                        // - guardar os dados da exceção num ficheiro de 'log'
+                        //      no disco rígido do servidor
+                        // - guardar os dados da exceção numa tabela da BD
+                        // - apagar o 'utilizador' criado na linha 154
+                        // - notificar a pessoa que está a interagir com a 
+                        //      aplicação do sucedido
+                        // - redirecionar a pessoa para uma página de erro
+
+                        _logger.LogInformation(ex.ToString());
+
+                        throw;
+                    }
+                    // **********************************************
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
