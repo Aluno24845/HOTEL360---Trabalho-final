@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HOTEL360___Trabalho_final.Controllers{
+
+    [Authorize] // qualquer tarefa desta classe só pode ser efetuada por pessoas autorizadas (ie. autenticadas)
     public class QuartosController : Controller {
 
         /// <summary>
