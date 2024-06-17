@@ -16,6 +16,8 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Nome do Utilizador
         /// </summary>
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
+        [StringLength(100)]
         public string Nome { get; set; }
 
         /// <summary>
@@ -39,6 +41,16 @@ namespace HOTEL360___Trabalho_final.Models{
         [DataType(DataType.Date)] // informa a View de como deve tratar este atributo
         [DisplayFormat(ApplyFormatInEditMode = true,
                      DataFormatString = "{0:dd-MM-yyyy}")]
+        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório")]
         public DateOnly DataNascimento { get; set; }
+
+        /// <summary>
+        /// atributo para funcionar como FK
+        /// no relacionamento entre a 
+        /// base de dados do 'negócio' 
+        /// e a base de dados da 'autenticação'
+        /// </summary>
+        [StringLength(40)]
+        public string UserId { get; set; }
     }
 }

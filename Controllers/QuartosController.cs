@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HOTEL360___Trabalho_final.Controllers{
+
+    [Authorize] // qualquer tarefa desta classe só pode ser efetuada por pessoas autorizadas (ie. autenticadas)
     public class QuartosController : Controller {
 
         /// <summary>
@@ -29,6 +32,11 @@ namespace HOTEL360___Trabalho_final.Controllers{
             _webHostEnvironment = webHostEnvironment;
         }
 
+        /// <summary>
+        /// mostra todos os quartos existentes na BD
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous] // esta anotação isenta da obrigação do utilizador estar autenticado
         // GET: Quartos
         public async Task<IActionResult> Index() {
             return View(await _context.Quartos.ToListAsync());

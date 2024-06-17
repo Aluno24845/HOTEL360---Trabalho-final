@@ -7,19 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace HOTEL360___Trabalho_final.Controllers
-{
+namespace HOTEL360___Trabalho_final.Controllers{
+
+    [Authorize] // qualquer tarefa desta classe só pode ser efetuada por pessoas autorizadas (ie. autenticadas)
     public class ReservasController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ReservasController(ApplicationDbContext context)
-        {
+        public ReservasController(ApplicationDbContext context)  {
             _context = context;
         }
 
         // GET: Reservas
+        /// <summary>
+        /// mostra todas as reservas existentes na BD
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Reservas.Include(r => r.Quarto);
