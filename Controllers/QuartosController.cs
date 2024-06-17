@@ -32,6 +32,11 @@ namespace HOTEL360___Trabalho_final.Controllers{
             _webHostEnvironment = webHostEnvironment;
         }
 
+        /// <summary>
+        /// mostra todos os quartos existentes na BD
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous] // esta anotação isenta da obrigação do utilizador estar autenticado
         // GET: Quartos
         public async Task<IActionResult> Index() {
             return View(await _context.Quartos.ToListAsync());

@@ -16,8 +16,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
     {
         private readonly ApplicationDbContext _context;
 
-        public ReservasController(ApplicationDbContext context)
-        {
+        public ReservasController(ApplicationDbContext context)  {
             _context = context;
         }
 

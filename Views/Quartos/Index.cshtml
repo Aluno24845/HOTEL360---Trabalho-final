@@ -6,9 +6,11 @@
 
 <h1>Lista de Quartos</h1>
 
-<p>
-    <a asp-action="Create">Novo Quarto</a>
-</p>
+@if (User.Identity.IsAuthenticated){
+    <p>
+        <a asp-action="Create">Novo Curso</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -31,7 +33,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Nome)
@@ -61,9 +63,14 @@
                          width="100px" />
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <text>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+                        </text>
+                    }
             </td>
         </tr>
 }
