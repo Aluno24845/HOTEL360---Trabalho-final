@@ -33,6 +33,7 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Valor já pago pelo Hospede
         /// </summary>
+        [Display(Name = "Valor Pago")]
         public decimal ValorPago { get; set; }
 
         /// <summary>

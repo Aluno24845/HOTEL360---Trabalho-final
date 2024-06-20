@@ -1,12 +1,12 @@
-﻿@model HOTEL360___Trabalho_final.Models.Quartos
+﻿@model HOTEL360___Trabalho_final.Models.Servicos
 
 @{
-    ViewData["Title"] = "Editar Quarto";
+    ViewData["Title"] = "Editar Serviço";
 }
 
-<h1>Editar Quarto</h1>
+<h1>Editar Serviço</h1>
 
-<h4>Quarto</h4>
+<h4>Serviço</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,24 +19,14 @@
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Capacidade" class="control-label"></label>
-                <input asp-for="Capacidade" class="form-control" />
-                <span asp-validation-for="Capacidade" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Preco" class="control-label"></label>
-                <input asp-for="Preco" class="form-control" />
-                <span asp-validation-for="Preco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Descricao" class="control-label"></label>
                 <input asp-for="Descricao" class="form-control" />
                 <span asp-validation-for="Descricao" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Imagem" class="control-label"></label>
-                <input asp-for="Imagem" class="form-control" />
-                <span asp-validation-for="Imagem" class="text-danger"></span>
+                <label asp-for="Preco" class="control-label"></label>
+                <input asp-for="Preco" class="form-control" />
+                <span asp-validation-for="Preco" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <br/>
@@ -47,7 +37,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Regressar à listagem de Quartos</a>
+    <a asp-action="Index">Regressar à listagem de Serviços</a>
 </div>
 
 @section Scripts {

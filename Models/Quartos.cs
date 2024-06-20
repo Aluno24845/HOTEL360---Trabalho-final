@@ -46,11 +46,15 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Preço do Quarto por noite
         /// </summary>
+        [Display(Name = "Preço")]
         public decimal Preco { get; set; }
 
         /// <summary>
         /// Descrição do Quarto
         /// </summary>
+        [Display(Name = "Descrição")]
+        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório")]
+        [StringLength(255)]
         public string Descricao { get; set; }
 
         /// <summary>

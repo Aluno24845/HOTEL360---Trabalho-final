@@ -1,14 +1,14 @@
 ﻿@model IEnumerable<HOTEL360___Trabalho_final.Models.Quartos>
 
 @{
-    ViewData["Title"] = "Início";
+    ViewData["Title"] = "Quartos";
 }
 
 <h1>Lista de Quartos</h1>
 
 @if (User.Identity.IsAuthenticated){
     <p>
-        <a asp-action="Create">Novo Curso</a>
+        <a asp-action="Create">Novo Quarto</a>
     </p>
 }
 <table class="table">
