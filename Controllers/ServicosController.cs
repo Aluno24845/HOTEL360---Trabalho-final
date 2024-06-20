@@ -54,16 +54,44 @@ namespace HOTEL360___Trabalho_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Descricao,Preco")] Servicos servicos)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Descricao,PrecoAux,Preco")] Servicos servico)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(servicos);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid) {
+
+                try {               
+                
+                    //transferir o valor de PrecoAux para Preco
+                    servico.Preco = Convert.ToDecimal(servico.PrecoAux.Replace('.', ','));
+
+                    //adiciona os dados vindos da View à BD
+                    _context.Add(servico);
+                    //efetua COMMIT na BD
+                    await _context.SaveChangesAsync();
+                    //redireciona o utilizador para a página Index
+                    return RedirectToAction(nameof(Index));
+
+                }
+                catch (Exception ex)
+                {
+                    
+                    // se cheguei aqui é pq aconteceu um problema
+                    // crítico. TEM de ser tratado.
+                    //    - devolver o controlo ao utilizador
+                    //    - corrigir o erro
+                    //    - escrever os dados do erro num LOG
+                    //    - escrever os dados do erro numa tabela da BD
+                    //    - etc.
+                    throw;                    
+
+
+                }
+                
             }
-            return View(servicos);
+            //se chegou aqui é porque algo não correu bem
+            //volta à View com os dados fornecidos pela View 
+            return View(servico);
         }
+
 
         // GET: Servicos/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -86,9 +114,9 @@ namespace HOTEL360___Trabalho_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Descricao,Preco")] Servicos servicos)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Descricao,Preco")] Servicos servico)
         {
-            if (id != servicos.Id)
+            if (id != servico.Id)
             {
                 return NotFound();
             }
@@ -97,12 +125,12 @@ namespace HOTEL360___Trabalho_final.Controllers
             {
                 try
                 {
-                    _context.Update(servicos);
+                    _context.Update(servico);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ServicosExists(servicos.Id))
+                    if (!ServicosExists(servico.Id))
                     {
                         return NotFound();
                     }
@@ -113,7 +141,7 @@ namespace HOTEL360___Trabalho_final.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(servicos);
+            return View(servico);
         }
 
         // GET: Servicos/Delete/5
@@ -139,10 +167,10 @@ namespace HOTEL360___Trabalho_final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var servicos = await _context.Servicos.FindAsync(id);
-            if (servicos != null)
+            var servico = await _context.Servicos.FindAsync(id);
+            if (servico != null)
             {
-                _context.Servicos.Remove(servicos);
+                _context.Servicos.Remove(servico);
             }
 
             await _context.SaveChangesAsync();
