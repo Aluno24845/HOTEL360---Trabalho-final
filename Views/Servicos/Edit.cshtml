@@ -1,12 +1,12 @@
 ﻿@model HOTEL360___Trabalho_final.Models.Servicos
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Serviço";
 }
 
-<h1>Edit</h1>
+<h1>Editar Serviço</h1>
 
-<h4>Servicos</h4>
+<h4>Serviço</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -29,14 +29,15 @@
                 <span asp-validation-for="Preco" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <br/>
+                <input type="submit" value="Guardar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Regressar à listagem de Serviços</a>
 </div>
 
 @section Scripts {
