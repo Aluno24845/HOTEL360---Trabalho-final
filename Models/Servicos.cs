@@ -21,11 +21,16 @@ namespace HOTEL360___Trabalho_final.Models
         /// <summary>
         /// Nome do Serviço
         /// </summary>
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
+        [StringLength(255)]
         public string Nome { get; set; }
 
         /// <summary>
         /// Descrição do Serviço
         /// </summary>
+        [Display(Name = "Descrição")]
+        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório")]
+        [StringLength(255)]
         public string Descricao {  get; set; }
 
         /// <summary>
