@@ -39,6 +39,19 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Quarto.Id)
         </dd>
+        @* lista dos Serviços da Reserva *@
+        <dt class="col-sm-2">
+            Serviços
+        </dt>
+        <dd class="col-sm-10">
+            <ul>
+                @foreach (var serv in Model.ListaServicos)
+                {
+                    <li>@serv.Nome</li>
+                }
+            </ul>
+        </dd>
+    
     </dl>
 </div>
 <div>
