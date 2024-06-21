@@ -8,16 +8,26 @@ using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace HOTEL360___Trabalho_final.Controllers{
 
-    [Authorize] // qualquer tarefa desta classe só pode ser efetuada por pessoas autorizadas (ie. autenticadas)
+    /* apenas as pessoas autenticadas E que pertençam 
+     * ao Role de GERENTE podem entrar 
+     */
+    [Authorize(Roles = "Gerentes, Hospedes")] 
     public class ReservasController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ReservasController(ApplicationDbContext context)  {
+        /// <summary>
+        ///  Objeto para interagir com a Autenticação
+        /// </summary>
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public ReservasController(ApplicationDbContext context, UserManager<IdentityUser> userManager)  {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Reservas
