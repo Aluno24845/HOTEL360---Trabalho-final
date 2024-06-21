@@ -33,11 +33,7 @@ namespace HOTEL360___Trabalho_final.Data{
         /// <summary>
         /// Tabela Quartos
         /// </summary>
-        public DbSet<Quartos> Quartos { get; set; }
-        /// <summary>
-        /// Tabela Reservas_Servicos
-        /// </summary>
-        public DbSet<Reservas_Servicos> ReservasServicos { get; set; }
+        public DbSet<Quartos> Quartos { get; set; }        
         /// <summary>
         /// Tabela Reservas
         /// </summary>

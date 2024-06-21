@@ -27,23 +27,30 @@ namespace HOTEL360___Trabalho_final.Controllers{
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Reservas.Include(r => r.Quarto);
-            return View(await applicationDbContext.ToListAsync());
+            var listaRsvs = _context.Reservas.Include(r => r.Quarto);
+            return View(await listaRsvs.ToListAsync());
         }
 
         // GET: Reservas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
+        public async Task<IActionResult> Details(int? id) {
+            if (id == null) {
                 return NotFound();
             }
 
+
+            // procura os dados da Reserva
+            // em SQL : SELECT *
+            //          FROM Reservas rs INNER JOIN Quartos q ON rs.QuartoFK = q.Id
+            //                                       INNER JOIN ReservasServicos ress ON ress.ReservaFK = rs.ID
+            //                                       INNER JOIN Servicos s ON ress.ServFK = s.Id
+            //          WHERE rs.Id = id 
+
+            // em LINQ : 
             var reservas = await _context.Reservas
                 .Include(r => r.Quarto)
+                .Include(r => r.ListaServicos)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (reservas == null)
-            {
+            if (reservas == null)   {
                 return NotFound();
             }
 
@@ -58,7 +65,14 @@ namespace HOTEL360___Trabalho_final.Controllers{
             // Expressão LINQ para efetuar a pesquisa dos Quartos
             //    _context.Quartos.OrderBy(c=>c.Nome)
             ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Nome), "Id", "Nome");
-            
+
+            // Obter a lista de serviços,
+            // para enviar para a View
+            // em SQL: SELECT * FROM Servicos s ORDER BY s.Nome
+            // em LINQ:
+            var listaSer = _context.Servicos.OrderBy(p => p.Nome).ToList();
+            ViewData["listaServicos"] = listaSer;
+
             //devolve controlo à View
             return View();
         }
@@ -66,13 +80,52 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // POST: Reservas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// recolha de dados na adição de uma nova Reserva
+        /// </summary>
+        /// <param name="reserva">dados da Reserva</param>
+        /// <param name="escolhaServicos">lista dos IDs dos serviços que
+        ///         ficarão associados à Reserva</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ValorPago,ValorPagoAux,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK")] Reservas reserva)
-        {
-            if (ModelState.IsValid) {
+        public async Task<IActionResult> Create([Bind("Id,ValorPago,ValorPagoAux,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK")] Reservas reserva, int[] escolhaServicos)  {
+
+            // var. auxiliar
+            bool haErros = false;
+
+            //Validações
+            if (reserva.QuartoFK == -1)  {
+                ModelState.AddModelError("", "Escolha um quarto, por favor.");
+                haErros = true;
+            }
+
+            if (escolhaServicos.Length == 0)
+            {
+                // não escolhi nenhum serviço
+                ModelState.AddModelError("", "Escolha um serviço, pf.");
+                haErros = true;
+            }
+
+
+
+            if (ModelState.IsValid && !haErros) {
 
                 try  {
+
+                    // associar os serviços escolhidos à Reserva
+                    // criar uma Lista de serviços
+                    var listaServicosNaRes = new List<Servicos>();
+                    foreach (var serv in escolhaServicos) {
+                        // procurar o Serviço na BD
+                        var s = await _context.Servicos.FindAsync(serv);
+                        if (s != null) {
+                            listaServicosNaRes.Add(s);
+                        }
+                    }
+                    // atribuir a lista de serviços à Reserva
+                    reserva.ListaServicos = listaServicosNaRes;
+
 
                     //transferir o valor de VAlorPagoAux para ValorPago
                     reserva.ValorPago = Convert.ToDecimal(reserva.ValorPagoAux.Replace('.', ','));
@@ -97,8 +150,15 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 }
                 
             }
-            // se chego aqui é pq alguma coisa correu mal
+            // Se chego aqui é pq alguma coisa correu mal
+            // Vou devolver o controlo à View
+            // Tenho de preparar os dados a enviar
             ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Id), "Id", "Id", reserva.QuartoFK);
+
+            var listaSer = _context.Servicos.OrderBy(p => p.Nome).ToList();
+            ViewData["listaServicos"] = listaSer;
+
+
             return View(reserva);
         }
 

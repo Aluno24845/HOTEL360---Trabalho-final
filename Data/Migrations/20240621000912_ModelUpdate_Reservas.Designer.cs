@@ -4,6 +4,7 @@ using HOTEL360___Trabalho_final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HOTEL360___Trabalho_final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240621000912_ModelUpdate_Reservas")]
+    partial class ModelUpdate_Reservas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,13 +74,7 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                     b.Property<DateTime>("DataReserva")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("HospedesId")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuartoFK")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ReccecionistasId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("ValorPago")
@@ -85,13 +82,27 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HospedesId");
-
                     b.HasIndex("QuartoFK");
 
-                    b.HasIndex("ReccecionistasId");
-
                     b.ToTable("Reservas");
+                });
+
+            modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Reservas_Servicos", b =>
+                {
+                    b.Property<int>("ReservaFK")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicoFK")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReservaFK", "ServicoFK");
+
+                    b.HasIndex("ServicoFK");
+
+                    b.ToTable("ReservasServicos");
                 });
 
             modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Servicos", b =>
@@ -159,6 +170,21 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Utilizadores");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("HospedesReservas", b =>
+                {
+                    b.Property<int>("ListaHospedesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListaReservasId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ListaHospedesId", "ListaReservasId");
+
+                    b.HasIndex("ListaReservasId");
+
+                    b.ToTable("HospedesReservas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -363,19 +389,19 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ReservasServicos", b =>
+            modelBuilder.Entity("ReccecionistasReservas", b =>
                 {
+                    b.Property<int>("ListaRececcionistasId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ListaReservasId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ListaServicosId")
-                        .HasColumnType("int");
+                    b.HasKey("ListaRececcionistasId", "ListaReservasId");
 
-                    b.HasKey("ListaReservasId", "ListaServicosId");
+                    b.HasIndex("ListaReservasId");
 
-                    b.HasIndex("ListaServicosId");
-
-                    b.ToTable("ReservasServicos");
+                    b.ToTable("ReccecionistasReservas");
                 });
 
             modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Gerentes", b =>
@@ -418,21 +444,47 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
 
             modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Reservas", b =>
                 {
-                    b.HasOne("HOTEL360___Trabalho_final.Models.Hospedes", null)
-                        .WithMany("ListaReservas")
-                        .HasForeignKey("HospedesId");
-
                     b.HasOne("HOTEL360___Trabalho_final.Models.Quartos", "Quarto")
                         .WithMany("ListaReservas")
                         .HasForeignKey("QuartoFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HOTEL360___Trabalho_final.Models.Reccecionistas", null)
-                        .WithMany("ListaReservas")
-                        .HasForeignKey("ReccecionistasId");
-
                     b.Navigation("Quarto");
+                });
+
+            modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Reservas_Servicos", b =>
+                {
+                    b.HasOne("HOTEL360___Trabalho_final.Models.Reservas", "Reserva")
+                        .WithMany("ListaReservasServicos")
+                        .HasForeignKey("ReservaFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HOTEL360___Trabalho_final.Models.Servicos", "Servico")
+                        .WithMany("ListaReservasServicos")
+                        .HasForeignKey("ServicoFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reserva");
+
+                    b.Navigation("Servico");
+                });
+
+            modelBuilder.Entity("HospedesReservas", b =>
+                {
+                    b.HasOne("HOTEL360___Trabalho_final.Models.Hospedes", null)
+                        .WithMany()
+                        .HasForeignKey("ListaHospedesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HOTEL360___Trabalho_final.Models.Reservas", null)
+                        .WithMany()
+                        .HasForeignKey("ListaReservasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -486,17 +538,17 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ReservasServicos", b =>
+            modelBuilder.Entity("ReccecionistasReservas", b =>
                 {
-                    b.HasOne("HOTEL360___Trabalho_final.Models.Reservas", null)
+                    b.HasOne("HOTEL360___Trabalho_final.Models.Reccecionistas", null)
                         .WithMany()
-                        .HasForeignKey("ListaReservasId")
+                        .HasForeignKey("ListaRececcionistasId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HOTEL360___Trabalho_final.Models.Servicos", null)
+                    b.HasOne("HOTEL360___Trabalho_final.Models.Reservas", null)
                         .WithMany()
-                        .HasForeignKey("ListaServicosId")
+                        .HasForeignKey("ListaReservasId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -506,14 +558,14 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                     b.Navigation("ListaReservas");
                 });
 
-            modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Hospedes", b =>
+            modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Reservas", b =>
                 {
-                    b.Navigation("ListaReservas");
+                    b.Navigation("ListaReservasServicos");
                 });
 
-            modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Reccecionistas", b =>
+            modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Servicos", b =>
                 {
-                    b.Navigation("ListaReservas");
+                    b.Navigation("ListaReservasServicos");
                 });
 #pragma warning restore 612, 618
         }
