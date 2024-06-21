@@ -7,11 +7,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace HOTEL360___Trabalho_final.Controllers
-{
-    public class ServicosController : Controller
-    {
+namespace HOTEL360___Trabalho_final.Controllers {
+
+    [Authorize] // qualquer tarefa desta classe só pode ser efetuada por pessoas autorizadas (ie. autenticadas)
+    public class ServicosController : Controller {
+
+        /// <summary>
+        /// referência à BD do projeto
+        /// </summary>
         private readonly ApplicationDbContext _context;
 
         public ServicosController(ApplicationDbContext context)
@@ -19,6 +24,11 @@ namespace HOTEL360___Trabalho_final.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// mostra todos os serviços existentes na BD
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous] // esta anotação isenta da obrigação do utilizador estar autenticado
         // GET: Servicos
         public async Task<IActionResult> Index()
         {
@@ -44,6 +54,9 @@ namespace HOTEL360___Trabalho_final.Controllers
         }
 
         // GET: Servicos/Create
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE podem entrar */
+        [Authorize(Roles = "Gerentes")]
         public IActionResult Create()
         {
             return View();
@@ -92,7 +105,9 @@ namespace HOTEL360___Trabalho_final.Controllers
             return View(servico);
         }
 
-
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE podem entrar */
+        [Authorize(Roles = "Gerentes")]
         // GET: Servicos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -144,6 +159,9 @@ namespace HOTEL360___Trabalho_final.Controllers
             return View(servico);
         }
 
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE podem entrar */
+        [Authorize(Roles = "Gerentes")]
         // GET: Servicos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

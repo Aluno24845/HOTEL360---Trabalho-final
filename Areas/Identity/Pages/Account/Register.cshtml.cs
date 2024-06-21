@@ -164,6 +164,11 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
                     // houve sucesso na criação da conta de autenticação
                     _logger.LogInformation("O utilizador criou uma nova conta com password.");
 
+                    // **********************************************
+                    // Vamos atribuir à pessoa que se registou o Role HOSPEDES
+                    await _userManager.AddToRoleAsync(user, "Hospedes");
+                    // **********************************************
+
 
                     // **********************************************
                     // vamos escrever na BD os dados do Hospede

@@ -8,16 +8,23 @@ using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace HOTEL360___Trabalho_final.Controllers{
 
-    [Authorize] // qualquer tarefa desta classe só pode ser efetuada por pessoas autorizadas (ie. autenticadas)
+    [Authorize]
     public class ReservasController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ReservasController(ApplicationDbContext context)  {
+        /// <summary>
+        ///  Objeto para interagir com a Autenticação
+        /// </summary>
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public ReservasController(ApplicationDbContext context, UserManager<IdentityUser> userManager)  {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Reservas
@@ -56,7 +63,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
             return View(reservas);
         }
-
+                
         // GET: Reservas/Create
         public IActionResult Create()  {
             // efetuar uma pesquisa na BD pelos Quartos
@@ -162,6 +169,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
             return View(reserva);
         }
 
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE ou Role de RECCECIONISTA podem entrar */
+        [Authorize(Roles = "Gerentes, Reccecionistas")]
         // GET: Reservas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -209,7 +219,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
             ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reservas.QuartoFK);
             return View(reservas);
         }
-
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE ou Role de RECCECIONISTA podem entrar */
+        [Authorize(Roles = "Gerentes, Reccecionistas")] 
         // GET: Reservas/Delete/5
         public async Task<IActionResult> Delete(int? id)  {
             if (id == null)   {
