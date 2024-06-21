@@ -31,29 +31,33 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorPago)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataReserva)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataCheckIN)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataCheckOUT)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quarto.Nome)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
-            </td>
-        </tr>
-}
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValorPago)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataReserva)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataCheckIN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataCheckOUT)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quarto.Nome)
+                </td>
+                <td>
+                    @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")) {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> 
+                    }|
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                    @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")) {
+                        <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+                    }
+                </td>
+            </tr>
+    }
     </tbody>
 </table>

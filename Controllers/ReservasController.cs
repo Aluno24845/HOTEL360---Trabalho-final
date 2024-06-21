@@ -12,10 +12,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HOTEL360___Trabalho_final.Controllers{
 
-    /* apenas as pessoas autenticadas E que pertençam 
-     * ao Role de GERENTE podem entrar 
-     */
-    [Authorize(Roles = "Gerentes, Hospedes")] 
+    [Authorize]
     public class ReservasController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -66,7 +63,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
             return View(reservas);
         }
-
+                
         // GET: Reservas/Create
         public IActionResult Create()  {
             // efetuar uma pesquisa na BD pelos Quartos
@@ -172,6 +169,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
             return View(reserva);
         }
 
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE ou Role de RECCECIONISTA podem entrar */
+        [Authorize(Roles = "Gerentes, Reccecionistas")]
         // GET: Reservas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -219,7 +219,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
             ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reservas.QuartoFK);
             return View(reservas);
         }
-
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE ou Role de RECCECIONISTA podem entrar */
+        [Authorize(Roles = "Gerentes, Reccecionistas")] 
         // GET: Reservas/Delete/5
         public async Task<IActionResult> Delete(int? id)  {
             if (id == null)   {

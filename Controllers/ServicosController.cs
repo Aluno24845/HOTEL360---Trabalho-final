@@ -9,8 +9,9 @@ using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace HOTEL360___Trabalho_final.Controllers
-{
+namespace HOTEL360___Trabalho_final.Controllers {
+
+    [Authorize] // qualquer tarefa desta classe só pode ser efetuada por pessoas autorizadas (ie. autenticadas)
     public class ServicosController : Controller {
 
         /// <summary>
@@ -53,6 +54,9 @@ namespace HOTEL360___Trabalho_final.Controllers
         }
 
         // GET: Servicos/Create
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE podem entrar */
+        [Authorize(Roles = "Gerentes")]
         public IActionResult Create()
         {
             return View();
@@ -101,7 +105,9 @@ namespace HOTEL360___Trabalho_final.Controllers
             return View(servico);
         }
 
-
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE podem entrar */
+        [Authorize(Roles = "Gerentes")]
         // GET: Servicos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -153,6 +159,9 @@ namespace HOTEL360___Trabalho_final.Controllers
             return View(servico);
         }
 
+        /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE podem entrar */
+        [Authorize(Roles = "Gerentes")]
         // GET: Servicos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

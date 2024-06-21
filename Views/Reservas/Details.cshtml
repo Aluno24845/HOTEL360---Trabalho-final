@@ -67,6 +67,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
+    @if (User.IsInRole("Gerente") || User.IsInRole("Rececionista"))  {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a>
+    }
+    |
     <a asp-action="Index">Regressar à listagem de Reservas</a>
 </div>

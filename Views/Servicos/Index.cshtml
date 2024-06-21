@@ -6,8 +6,7 @@
 
 <h1>Lista de Serviços</h1>
 
-@if (User.Identity.IsAuthenticated)
-{
+@if (User.IsInRole("Gerentes")){
     <p>
         <a asp-action="Create">Novo Serviço</a>
     </p>
@@ -40,13 +39,21 @@
                 @Html.DisplayFor(modelItem => item.Preco)
             </td>
             <td>
-                @if (User.Identity.IsAuthenticated) {
-                    <text>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
-                    </text>
-                }
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <text>
+                            @if (User.IsInRole("Gerentes"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                            }
+                            |
+                            <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                            @if (User.IsInRole("Gerentes"))
+                            {
+                                <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+                            }
+                        </text>
+                    }
             </td>
         </tr>
 }
