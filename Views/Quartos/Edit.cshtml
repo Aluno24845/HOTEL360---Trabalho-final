@@ -10,7 +10,10 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit"
+            method="post"
+            enctype="multipart/form-data">
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -24,9 +27,14 @@
                 <span asp-validation-for="Capacidade" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Preco" class="control-label"></label>
-                <input asp-for="Preco" class="form-control" />
-                <span asp-validation-for="Preco" class="text-danger"></span>
+                @*
+                Vamos usar a variável auxiliar para ler os dados
+                do PRECO para evitar os constrangimentos do
+                processamento de vars. do tipo DECIMAL
+                *@
+                <label asp-for="PrecoAux" class="control-label"></label>
+                <input asp-for="PrecoAux" class="form-control" />
+                <span asp-validation-for="PrecoAux" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Descricao" class="control-label"></label>
@@ -35,8 +43,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Imagem" class="control-label"></label>
-                <input asp-for="Imagem" class="form-control" />
-                <span asp-validation-for="Imagem" class="text-danger"></span>
+                @* File Upload
+                - não esquecer definir:
+                - 'accept'' para ajudar os utilizadores a escolher o tipo certo de ficheiro
+                - 'name' para acederem ao ficheiro no Servidor
+                *@
+                <input type="file" name="ImagemLogo" accept=".png,.jpg,.jpeg" class="form-control" />
             </div>
             <div class="form-group">
                 <br/>

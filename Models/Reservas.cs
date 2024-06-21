@@ -8,9 +8,8 @@ namespace HOTEL360___Trabalho_final.Models{
         /// Construtor da classe Reservas 
         /// </summary>
         public Reservas() {
-            ListaReservasServicos = new HashSet<Reservas_Servicos>();
-            ListaRececcionistas = new HashSet<Reccecionistas>();
-            ListaHospedes = new HashSet<Hospedes>();
+            ListaServicos = new HashSet<Servicos>();
+            
         }
 
         /// <summary>
@@ -25,7 +24,7 @@ namespace HOTEL360___Trabalho_final.Models{
         [NotMapped] // não representa este atributo na BD
         [StringLength(8)]
         [Display(Name = "Valor Pago")]
-        [Required(ErrorMessage = "O {0} é obrigatória.")]
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório.")]
         [RegularExpression("[0-9]+[.,]?[0-9]{0,2}",
            ErrorMessage = "só aceita digitos numéricos, separados por . ou por ,")]
         public string ValorPagoAux { get; set; }
@@ -40,6 +39,7 @@ namespace HOTEL360___Trabalho_final.Models{
         /// Data em que foi feita a reserva
         /// </summary>
         [Display(Name = "Data da reserva")]
+        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório.")]
         [DisplayFormat(ApplyFormatInEditMode = true,
                      DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime DataReserva {  get; set; }
@@ -48,6 +48,7 @@ namespace HOTEL360___Trabalho_final.Models{
         /// Data de entrada no Quarto
         /// </summary>
         [Display(Name = "Data do Check-IN")]
+        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório.")]
         [DisplayFormat(ApplyFormatInEditMode = true,
                      DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime DataCheckIN { get; set; }
@@ -56,6 +57,7 @@ namespace HOTEL360___Trabalho_final.Models{
         /// Data de saída do Quarto
         /// </summary>
         [Display(Name = "Data do Check-OUT")]
+        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório.")]
         [DisplayFormat(ApplyFormatInEditMode = true,
                      DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime DataCheckOUT { get; set; }
@@ -72,25 +74,9 @@ namespace HOTEL360___Trabalho_final.Models{
 
         // relacionamento do tipo N-M, SEM atributos do relacionamento
         /// <summary>
-        /// Lista dos Reccecionistas associadas à Reserva
+        /// Lista das Servicos associadas à Reserva
         /// </summary>
-        public ICollection<Reccecionistas> ListaRececcionistas { get; set; }
-
-        // relacionamento do tipo N-M, SEM atributos do relacionamento
-        /// <summary>
-        /// Lista dos Hospedes associados à Reserva
-        /// </summary>
-        public ICollection<Hospedes> ListaHospedes { get; set; }
-
-        // relacionamento do tipo N-M, COM atributos do relacionamento
-        // não vou referenciar a tabela 'final',
-        // mas a tabela no 'meio' do relacionamento
-        // vamos representar o relacionamento N-M à custa
-        // de dois relacionamentos do tipo 1-N
-        /// <summary>
-        /// Lista das Reservas_Servicos associadas à Reserva
-        /// </summary>
-        public ICollection<Reservas_Servicos> ListaReservasServicos { get; set; }
+        public ICollection<Servicos> ListaServicos { get; set; }
 
     }
 }

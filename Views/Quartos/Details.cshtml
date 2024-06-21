@@ -36,8 +36,12 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Imagem)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Imagem)
+        <dd class = "col-sm-10">            
+            <img src="~/Imagens/@Html.DisplayFor(model => model.Imagem)"
+                 alt="imagem do quarto @Html.DisplayFor(model => model.Nome)"
+                 title="@Html.DisplayFor(model => model.Nome)"
+                 width="100px" />
+
         </dd>
     </dl>
 </div>
