@@ -37,7 +37,16 @@
             @Html.DisplayNameFor(model => model.Quarto)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quarto.Id)
+            <a asp-action="Details"
+               asp-controller="Quartos"
+               asp-route-id="@Model.QuartoFK">
+                @Html.DisplayFor(model => model.Quarto.Nome)
+            </a><br />
+            <img src="~/Imagens/@Model.Quarto.Imagem"
+                 alt="Imagem do quarto @Model.Quarto.Nome"
+                 title="@Model.Quarto.Nome"
+                 width="100px" />
+            
         </dd>
         @* lista dos Serviços da Reserva *@
         <dt class="col-sm-2">
@@ -45,9 +54,12 @@
         </dt>
         <dd class="col-sm-10">
             <ul>
-                @foreach (var serv in Model.ListaServicos)
-                {
-                    <li>@serv.Nome</li>
+                @foreach (var serv in Model.ListaServicos) {
+                    <li>
+                        <a asp-action="Details"
+                           asp-controller="Servicos"
+                           asp-route-id="@serv.Id">@serv.Nome</a>
+                    </li>                    
                 }
             </ul>
         </dd>
