@@ -7,11 +7,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HOTEL360___Trabalho_final.Controllers
 {
-    public class ServicosController : Controller
-    {
+    public class ServicosController : Controller {
+
+        /// <summary>
+        /// referência à BD do projeto
+        /// </summary>
         private readonly ApplicationDbContext _context;
 
         public ServicosController(ApplicationDbContext context)
@@ -19,6 +23,11 @@ namespace HOTEL360___Trabalho_final.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// mostra todos os serviços existentes na BD
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous] // esta anotação isenta da obrigação do utilizador estar autenticado
         // GET: Servicos
         public async Task<IActionResult> Index()
         {

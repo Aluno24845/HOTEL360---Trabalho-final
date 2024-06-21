@@ -6,9 +6,12 @@
 
 <h1>Lista de Serviços</h1>
 
-<p>
-    <a asp-action="Create">Novo Serviço</a>
-</p>
+@if (User.Identity.IsAuthenticated)
+{
+    <p>
+        <a asp-action="Create">Novo Serviço</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -37,9 +40,13 @@
                 @Html.DisplayFor(modelItem => item.Preco)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+                @if (User.Identity.IsAuthenticated) {
+                    <text>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+                    </text>
+                }
             </td>
         </tr>
 }
