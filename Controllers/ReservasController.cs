@@ -30,7 +30,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
         // GET: Reservas
         /// <summary>
-        /// mostra todas as reservas existentes na BD
+        /// mostra todas as reserva existentes na BD
         /// </summary>
         /// <returns></returns>
         public async Task<IActionResult> Index()
@@ -83,7 +83,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
             /*
              * Aceder à lista de Hospedes se a pessoa que interage
-             * é do Role GERENTES
+             * é do Role GERENTES ou RECCECIONISTAS
              */
             if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")) {
                 // efetuar uma pesquisa na BD pelos Hospedes
@@ -119,7 +119,10 @@ namespace HOTEL360___Trabalho_final.Controllers{
             // var. auxiliar
             bool haErros = false;
                          
+            // No caso do Utilizador ser do role GERENTES ou RECCECIONISTA 
+            // Verifica se escolheu um hospede para associar à Reserva
             if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")){
+
                 //Validações
                 if (reserva.HospedeId == -1)
                 {
@@ -129,6 +132,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
             }
             else
             {
+                // Caso seja um Hospede então associa o seu Id à Reserva
                 var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var utilizador = await _context.Utilizadores
                .FirstOrDefaultAsync(m => m.UserId == user);
@@ -204,7 +208,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         }
 
         /* apenas as pessoas autenticadas E que pertençam 
-         * ao Role de GERENTE ou Role de RECCECIONISTA podem entrar */
+         * ao Role de GERENTES ou Role de RECCECIONISTA podem entrar */
         [Authorize(Roles = "Gerentes, Reccecionistas")]
         // GET: Reservas/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -214,13 +218,13 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 return NotFound();
             }
 
-            var reservas = await _context.Reservas.FindAsync(id);
-            if (reservas == null)
+            var reserva = await _context.Reservas.FindAsync(id);
+            if (reserva == null)
             {
                 return NotFound();
             }
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reservas.QuartoFK);
-            return View(reservas);
+            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reserva.QuartoFK);
+            return View(reserva);
         }
 
         // POST: Reservas/Edit/5
@@ -254,7 +258,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
             return View(reservas);
         }
         /* apenas as pessoas autenticadas E que pertençam 
-         * ao Role de GERENTE ou Role de RECCECIONISTA podem entrar */
+         * ao Role de GERENTES ou Role de RECCECIONISTA podem entrar */
         [Authorize(Roles = "Gerentes, Reccecionistas")] 
         // GET: Reservas/Delete/5
         public async Task<IActionResult> Delete(int? id)  {

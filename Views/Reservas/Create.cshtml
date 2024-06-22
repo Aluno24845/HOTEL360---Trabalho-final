@@ -60,6 +60,7 @@
                 }
 
             </div>
+            @* Caso seja um Gerente ou um Reccecionista escolhe o Hospede para associar à reserva*@
              @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")){
                 <div class="form-group">
                     <label asp-for="Hospede" class="control-label"></label>

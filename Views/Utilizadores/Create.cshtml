@@ -52,9 +52,11 @@
                         <input asp-for="DataNascimento" class="form-control" />
                         <span asp-validation-for="DataNascimento" class="text-danger"></span>
                     </div>  
+                    @* lista os tipos de utilizadores existentes*@
                     <div class="form-group">
                         <label asp-for="Tipo" class="control-label"></label>
                         <select asp-for="Tipo" class="form-control">
+                            <option value="-1">-- Escolha um tipo de utilizador --</option>
                             <option value="Gerentes">Gerentes</option>
                             <option value="Hospedes">Hospedes</option>
                             <option value="Reccecionistas">Reccecionistas</option>

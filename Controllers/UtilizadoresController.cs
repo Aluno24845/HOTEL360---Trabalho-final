@@ -32,6 +32,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
         /// </summary>
         public readonly UserManager<IdentityUser> _userManager;
 
+        /// <summary>
+        /// Objeto para interagir com as Roles
+        /// </summary>
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public UtilizadoresController(ApplicationDbContext context, IPasswordHasher<IdentityUser> passwordHasher, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
@@ -56,14 +59,14 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 return NotFound();
             }
 
-            var utilizadores = await _context.Utilizadores
+            var utilizador = await _context.Utilizadores
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (utilizadores == null)
+            if (utilizador == null)
             {
                 return NotFound();
             }
 
-            return View(utilizadores);
+            return View(utilizador);
         }
 
         // GET: Utilizadores/Create
@@ -80,27 +83,41 @@ namespace HOTEL360___Trabalho_final.Controllers{
         public async Task<IActionResult> Create([Bind("Email, Password, ConfirmPassword,Nome,Telemovel,Avatar,DataNascimento,NIF, Tipo, NumReccecionista")] CriarUtilizadores criarutilizador)
         {
            
-
-            if (ModelState.IsValid)
-            {
+            //verifica se o modelo é válido
+            if (ModelState.IsValid) {
+                // Cria uma nova instância de IdentityUser
                 IdentityUser applicationUser = new IdentityUser();
+                // Gera um novo GUID para o Id do utilizador
                 Guid guid = Guid.NewGuid();
                 applicationUser.Id = guid.ToString();
+                // Define o nome de utilizador como o email fornecido
                 applicationUser.UserName = criarutilizador.Email;
+                // Normaliza o nome de utilizador (converte para maiúsculas)
                 applicationUser.NormalizedUserName = criarutilizador.Email.ToUpper();
+                // Define o email do utilizador
                 applicationUser.Email = criarutilizador.Email;
+                // Normaliza o email 
                 applicationUser.NormalizedEmail = criarutilizador.Email.ToUpper();
+                //Define que o email já foi confirmado
                 applicationUser.EmailConfirmed = true;
+                // Gera o hash da password do utilizador
                 var hashedPassword = _passwordHasher.HashPassword(applicationUser, criarutilizador.Password);
+                // Gera um SecurityStamp 
                 applicationUser.SecurityStamp = Guid.NewGuid().ToString();
+                // Define o hash da password gerado
                 applicationUser.PasswordHash = hashedPassword;
 
+                // Adiciona o utilizador à tabela de Users
                 _context.Users.Add(applicationUser);
+                // Guarda as mudanças na bd
                 await _context.SaveChangesAsync();
 
+                // Procuramos o utilizador recém-criado pelo Id
                 var usercreated = await _context.Users.FindAsync(applicationUser.Id);
                 if (criarutilizador.Tipo == "Gerentes")  {
+                    // Se o tipo de utiizador for "Gerentes", criamos um novo objeto do tipo Gerentes
                     Gerentes utilizador = new Gerentes();
+                    // Atribuimos as propriedades específicas do Gerente
                     utilizador.Nome = criarutilizador.Nome;
                     utilizador.Telemovel = criarutilizador.Telemovel;
                     utilizador.DataNascimento = criarutilizador.DataNascimento;
@@ -108,6 +125,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     utilizador.NIF = criarutilizador.NIF;
                     utilizador.UserId = applicationUser.Id;
 
+                    // Adicionamos o objeto Gerentes à tabela Utilizadores
                     _context.Add(utilizador);
 
                     // **********************************************
@@ -115,9 +133,10 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     await _userManager.AddToRoleAsync(applicationUser, "Gerentes");
                     // **********************************************
                   
-                } else if (criarutilizador.Tipo == "Hospedes")
-                {
+                } else if (criarutilizador.Tipo == "Hospedes")  {
+                    // Se o tipo de utilizador for "Hospedes", criamos um novo objeto do tipo Hospedes
                     Hospedes utilizador = new Hospedes();
+                    // Atribuimos as propriedades específicas do Hospede
                     utilizador.Nome = criarutilizador.Nome;
                     utilizador.Telemovel = criarutilizador.Telemovel;
                     utilizador.DataNascimento = criarutilizador.DataNascimento;
@@ -125,6 +144,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     utilizador.NIF = criarutilizador.NIF;
                     utilizador.UserId = applicationUser.Id;
 
+                    // Adicionamos o objeto Hospedes à tabela Utilizadores
                     _context.Add(utilizador);
 
                     // **********************************************
@@ -133,9 +153,10 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     // **********************************************
                     
 
-                } else if (criarutilizador.Tipo == "Reccecionistas")
-                {
+                } else if (criarutilizador.Tipo == "Reccecionistas")  {
+                    // Se o tipo de utilizador for "Reccecionistas", criamos um novo objeto do tipo Reccecionistas
                     Reccecionistas utilizador = new Reccecionistas();
+                    // Atribuimos as propriedades específicas do Reccecionista
                     utilizador.Nome = criarutilizador.Nome;
                     utilizador.Telemovel = criarutilizador.Telemovel;
                     utilizador.DataNascimento = criarutilizador.DataNascimento;
@@ -143,6 +164,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     utilizador.NumReccecionista = criarutilizador.NumReccecionista;
                     utilizador.UserId = applicationUser.Id;
 
+                    // Adicionamos o objeto Reccecionistas à tabela Utilizadores
                     _context.Add(utilizador);
 
                     // **********************************************
@@ -152,8 +174,10 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
                 }
 
+                // Guardamos as alterações na base de dados
                 await _context.SaveChangesAsync();
 
+                // Somos rederecionados para a página Index 
                 return RedirectToAction(nameof(Index));
 
 
@@ -169,12 +193,12 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 return NotFound();
             }
 
-            var utilizadores = await _context.Utilizadores.FindAsync(id);
-            if (utilizadores == null)
+            var utilizador = await _context.Utilizadores.FindAsync(id);
+            if (utilizador == null)
             {
                 return NotFound();
             }
-            return View(utilizadores);
+            return View(utilizador);
         }
 
         // POST: Utilizadores/Edit/5
@@ -182,9 +206,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telemovel,Avatar,DataNascimento,UserId")] Utilizadores utilizadores)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telemovel,Avatar,DataNascimento,UserId")] Utilizadores utilizador)
         {
-            if (id != utilizadores.Id)
+            if (id != utilizador.Id)
             {
                 return NotFound();
             }
@@ -193,12 +217,12 @@ namespace HOTEL360___Trabalho_final.Controllers{
             {
                 try
                 {
-                    _context.Update(utilizadores);
+                    _context.Update(utilizador);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UtilizadoresExists(utilizadores.Id))
+                    if (!UtilizadoresExists(utilizador.Id))
                     {
                         return NotFound();
                     }
@@ -209,7 +233,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(utilizadores);
+            return View(utilizador);
         }
 
         // GET: Utilizadores/Delete/5
@@ -220,14 +244,14 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 return NotFound();
             }
 
-            var utilizadores = await _context.Utilizadores
+            var utilizador = await _context.Utilizadores
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (utilizadores == null)
+            if (utilizador == null)
             {
                 return NotFound();
             }
 
-            return View(utilizadores);
+            return View(utilizador);
         }
 
         // POST: Utilizadores/Delete/5
@@ -235,10 +259,10 @@ namespace HOTEL360___Trabalho_final.Controllers{
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var utilizadores = await _context.Utilizadores.FindAsync(id);
-            if (utilizadores != null)
+            var utilizador = await _context.Utilizadores.FindAsync(id);
+            if (utilizador != null)
             {
-                _context.Utilizadores.Remove(utilizadores);
+                _context.Utilizadores.Remove(utilizador);
             }
 
             await _context.SaveChangesAsync();

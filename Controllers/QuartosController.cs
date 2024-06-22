@@ -34,7 +34,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         }
 
         /// <summary>
-        /// mostra todos os quartos existentes na BD
+        /// mostra todos os quarto existentes na BD
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous] // esta anotação isenta da obrigação do utilizador estar autenticado
@@ -49,13 +49,13 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 return NotFound();
             }
 
-            var quartos = await _context.Quartos
+            var quarto = await _context.Quartos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (quartos == null) {
+            if (quarto == null) {
                 return NotFound();
             }
 
-            return View(quartos);
+            return View(quarto);
         }
 
         // GET: Quartos/Create
@@ -187,7 +187,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     //    - escrever os dados do erro numa tabela da BD
                     //    - etc.
                     throw;
-                }            
+                }         
 
             
             }
@@ -198,7 +198,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         }
 
         /* apenas as pessoas autenticadas E que pertençam 
-         * ao Role de GERENTE podem entrar */
+         * ao Role de GERENTES podem entrar */
         [Authorize(Roles = "Gerentes")]
         // GET: Quartos/Edit/5
         public async Task<IActionResult> Edit(int? id)  {
@@ -340,7 +340,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         }
 
         /* apenas as pessoas autenticadas E que pertençam 
-         * ao Role de GERENTE podem entrar */
+         * ao Role de GERENTES podem entrar */
         [Authorize(Roles = "Gerentes")]
         // GET: Quartos/Delete/5
         public async Task<IActionResult> Delete(int? id) {
@@ -348,13 +348,13 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 return NotFound();
             }
 
-            var quartos = await _context.Quartos
+            var quarto = await _context.Quartos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (quartos == null) {
+            if (quarto == null) {
                 return NotFound();
             }
 
-            return View(quartos);
+            return View(quarto);
         }
                 
         // POST: Quartos/Delete/5
@@ -365,9 +365,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
             // Nas ações de DELETE também é crucial a existência
             // de Try Catch 
 
-            var quartos = await _context.Quartos.FindAsync(id);
-            if (quartos != null) {
-                _context.Quartos.Remove(quartos);
+            var quarto = await _context.Quartos.FindAsync(id);
+            if (quarto != null) {
+                _context.Quartos.Remove(quarto);
             }
 
             await _context.SaveChangesAsync();

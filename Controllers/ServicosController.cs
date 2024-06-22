@@ -43,14 +43,14 @@ namespace HOTEL360___Trabalho_final.Controllers {
                 return NotFound();
             }
 
-            var servicos = await _context.Servicos
+            var servico = await _context.Servicos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (servicos == null)
+            if (servico == null)
             {
                 return NotFound();
             }
 
-            return View(servicos);
+            return View(servico);
         }
 
         // GET: Servicos/Create
@@ -116,12 +116,12 @@ namespace HOTEL360___Trabalho_final.Controllers {
                 return NotFound();
             }
 
-            var servicos = await _context.Servicos.FindAsync(id);
-            if (servicos == null)
+            var servico = await _context.Servicos.FindAsync(id);
+            if (servico == null)
             {
                 return NotFound();
             }
-            return View(servicos);
+            return View(servico);
         }
 
         // POST: Servicos/Edit/5
@@ -170,14 +170,14 @@ namespace HOTEL360___Trabalho_final.Controllers {
                 return NotFound();
             }
 
-            var servicos = await _context.Servicos
+            var servico = await _context.Servicos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (servicos == null)
+            if (servico == null)
             {
                 return NotFound();
             }
 
-            return View(servicos);
+            return View(servico);
         }
 
         // POST: Servicos/Delete/5
