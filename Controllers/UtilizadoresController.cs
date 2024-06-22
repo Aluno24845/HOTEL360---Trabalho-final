@@ -10,8 +10,10 @@ using HOTEL360___Trabalho_final.Models;
 
 namespace HOTEL360___Trabalho_final.Controllers
 {
-    public class UtilizadoresController : Controller
-    {
+    public class UtilizadoresController : Controller  {
+        /// <summary>
+        /// referência à BD do projeto
+        /// </summary>
         private readonly ApplicationDbContext _context;
 
         public UtilizadoresController(ApplicationDbContext context)
