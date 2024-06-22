@@ -1,0 +1,91 @@
+﻿@model HOTEL360___Trabalho_final.Models.CriarUtilizadores
+@{
+    ViewData["Title"] = "Adicionar Utilizador";
+}
+
+<h1>Adicionar Utilizador</h1>
+
+<h4>Utilizador</h4>
+<hr />
+
+<div class="container">    
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="control-label"></label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="control-label"></label>
+                        <input asp-for="ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>            
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Nome" class="control-label"></label>
+                        <input asp-for="Nome" class="form-control" />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+            
+                    <div class="form-group">
+                        <label asp-for="Telemovel" class="control-label"></label>
+                        <input asp-for="Telemovel" class="form-control" />
+                        <span asp-validation-for="Telemovel" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Avatar" class="control-label"></label>
+                        <input asp-for="Avatar" class="form-control" />
+                        <span asp-validation-for="Avatar" class="text-danger"></span>
+                    </div>            
+                    <div class="form-group">
+                        <label asp-for="DataNascimento" class="control-label"></label>
+                        <input asp-for="DataNascimento" class="form-control" />
+                        <span asp-validation-for="DataNascimento" class="text-danger"></span>
+                    </div>  
+                    @* lista os tipos de utilizadores existentes*@
+                    <div class="form-group">
+                        <label asp-for="Tipo" class="control-label"></label>
+                        <select asp-for="Tipo" class="form-control">
+                            <option value="-1">-- Escolha um tipo de utilizador --</option>
+                            <option value="Gerentes">Gerentes</option>
+                            <option value="Hospedes">Hospedes</option>
+                            <option value="Reccecionistas">Reccecionistas</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label asp-for="NIF" class="control-label"></label>
+                        <input asp-for="NIF" class="form-control" />
+                        <span asp-validation-for="NIF" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label asp-for="NumReccecionista" class="control-label"></label>
+                        <input asp-for="NumReccecionista" class="form-control" />
+                        <span asp-validation-for="NumReccecionista" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <br />
+                        <input type="submit" value="Adicionar" class="btn btn-primary" />
+                    </div>
+                    <div>
+                        <a asp-action="Index">Regressar à listagem de Utilizadores</a>
+                    </div>
+                </div>
+            </div>
+        </form>    
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

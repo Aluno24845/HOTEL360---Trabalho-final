@@ -71,6 +71,10 @@ namespace HOTEL360___Trabalho_final.Models{
         public int QuartoFK { get; set; } // Será FK para a tabela Quartos
         public Quartos Quarto { get; set; }  // em rigor esta instrução seria a única necessária
 
+        // relacionamento do tipo N-1
+        [ForeignKey(nameof(Hospede))] // anotação que liga HospedeFK a Reserva
+        public int HospedeId { get; set; } // Será FK para a tabela Reserva
+        public Hospedes Hospede { get; set; }  // em rigor esta instrução seria a única necessária
 
         // relacionamento do tipo N-M, SEM atributos do relacionamento
         /// <summary>
