@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace HOTEL360___Trabalho_final.Controllers{
 
@@ -20,9 +21,18 @@ namespace HOTEL360___Trabalho_final.Controllers{
         /// </summary>
         private readonly ApplicationDbContext _context;
 
-        public UtilizadoresController(ApplicationDbContext context)
+        /// <summary>
+        /// referência para gerar Hash para password
+        /// </summary>
+        public readonly IPasswordHasher<IdentityUser> _passwordHasher;
+
+        public readonly UserManager<IdentityUser> _userManager;
+
+        public UtilizadoresController(ApplicationDbContext context, IPasswordHasher<IdentityUser> passwordHasher, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
+            _userManager = userManager;
         }
 
         // GET: Utilizadores
@@ -60,13 +70,84 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Email, Password, ConfirmPassord, Nome,Telemovel,Avatar,DataNascimento,UserId")] CriarUtilizadores criarutilizador)
+        public async Task<IActionResult> Create([Bind("Email, Password, ConfirmPassword,Nome,Telemovel,Avatar,DataNascimento,NIF, Tipo, NumReccecionista")] CriarUtilizadores criarutilizador)
         {
             if (ModelState.IsValid)
             {
-                //_context.Add(criarutilizador);
-                //await _context.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
+                IdentityUser applicationUser = new IdentityUser();
+                Guid guid = Guid.NewGuid();
+                applicationUser.Id = guid.ToString();
+                applicationUser.UserName = criarutilizador.Email;
+                applicationUser.NormalizedUserName = criarutilizador.Email.ToUpper();
+                applicationUser.Email = criarutilizador.Email;
+                applicationUser.NormalizedEmail = criarutilizador.Email.ToUpper();
+                applicationUser.EmailConfirmed = true;
+                var hashedPassword = _passwordHasher.HashPassword(applicationUser, criarutilizador.Password);
+                applicationUser.SecurityStamp = Guid.NewGuid().ToString();
+                applicationUser.PasswordHash = hashedPassword;
+
+                _context.Users.Add(applicationUser);
+                await _context.SaveChangesAsync();
+
+                var usercreated = await _context.Users.FindAsync(applicationUser.Id);
+                if (criarutilizador.Tipo == "Gerentes")  {
+                    Gerentes utilizador = new Gerentes();
+                    utilizador.Nome = criarutilizador.Nome;
+                    utilizador.Telemovel = criarutilizador.Telemovel;
+                    utilizador.DataNascimento = criarutilizador.DataNascimento;
+                    utilizador.Avatar = criarutilizador.Avatar;
+                    utilizador.NIF = criarutilizador.NIF;
+                    utilizador.UserId = applicationUser.Id;
+
+                    _context.Add(utilizador);
+
+                    // **********************************************
+                    // Vamos atribuir à pessoa que registámos o Role GERENTES
+                    await _userManager.AddToRoleAsync(applicationUser, "Gerentes");
+                    // **********************************************
+                  
+                } else if (criarutilizador.Tipo == "Hospedes")
+                {
+                    Hospedes utilizador = new Hospedes();
+                    utilizador.Nome = criarutilizador.Nome;
+                    utilizador.Telemovel = criarutilizador.Telemovel;
+                    utilizador.DataNascimento = criarutilizador.DataNascimento;
+                    utilizador.Avatar = criarutilizador.Avatar;
+                    utilizador.NIF = criarutilizador.NIF;
+                    utilizador.UserId = applicationUser.Id;
+
+                    _context.Add(utilizador);
+
+                    // **********************************************
+                    // Vamos atribuir à pessoa que registámos o Role HOSPEDES
+                    await _userManager.AddToRoleAsync(applicationUser, "Hospedes");
+                    // **********************************************
+                    
+
+                } else if (criarutilizador.Tipo == "Reccecionistas")
+                {
+                    Reccecionistas utilizador = new Reccecionistas();
+                    utilizador.Nome = criarutilizador.Nome;
+                    utilizador.Telemovel = criarutilizador.Telemovel;
+                    utilizador.DataNascimento = criarutilizador.DataNascimento;
+                    utilizador.Avatar = criarutilizador.Avatar;
+                    utilizador.NumReccecionista = criarutilizador.NumReccecionista;
+                    utilizador.UserId = applicationUser.Id;
+
+                    _context.Add(utilizador);
+
+                    // **********************************************
+                    // Vamos atribuir à pessoa que registámos o Role RECCECIONISTAS
+                    await _userManager.AddToRoleAsync(applicationUser, "Reccecionistas");
+                    // **********************************************
+
+                }
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+
+
             }
             return View(criarutilizador);
         }

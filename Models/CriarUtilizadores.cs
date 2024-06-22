@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace HOTEL360___Trabalho_final.Models{
 
@@ -6,12 +7,6 @@ namespace HOTEL360___Trabalho_final.Models{
     /// classe genérica dos Utilizadores da aplicação
     /// </summary>
     public class CriarUtilizadores {
-
-        /// <summary>
-        /// Chave Primária
-        /// </summary>
-        [Key] 
-        public int Id { get; set; }
 
         /// <summary>
         /// Email do utilizador
@@ -70,12 +65,24 @@ namespace HOTEL360___Trabalho_final.Models{
         public DateOnly DataNascimento { get; set; }
 
         /// <summary>
-        /// atributo para funcionar como FK
-        /// no relacionamento entre a 
-        /// base de dados do 'negócio' 
-        /// e a base de dados da 'autenticação'
+        /// Tipo de Utilizador
         /// </summary>
-        [StringLength(40)]
-        public string UserId { get; set; }
+        public string Tipo { get; set; }
+
+        /// <summary>
+        /// NIF 
+        /// </summary>
+        [Display(Name = "Número de contribuinte")]
+        [StringLength(9)]
+        [RegularExpression("[1235679][0-9]{8}",
+            ErrorMessage = "O {0}  deve começar com 1,2,3,5,6,7,9 e só aceita 9 digitos")]
+        public string NIF { get; set; }
+
+        /// <summary>
+        /// Numero do Reccecionista
+        /// </summary>
+        [Display(Name = "Número do Reccecionista")]
+        public int NumReccecionista { get; set; }
+
     }
 }
