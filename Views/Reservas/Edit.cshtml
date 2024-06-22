@@ -14,10 +14,10 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="ValorPago" class="control-label"></label>
-                <input asp-for="ValorPago" class="form-control" />
-                <span asp-validation-for="ValorPago" class="text-danger"></span>
-            </div>            
+                <label asp-for="ValorPagoAux" class="control-label"></label>
+                <input asp-for="ValorPagoAux" class="form-control" />
+                <span asp-validation-for="ValorPagoAux" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="DataCheckIN" class="control-label"></label>
                 <input asp-for="DataCheckIN" class="form-control" />
@@ -29,12 +29,7 @@
                 <span asp-validation-for="DataCheckOUT" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="QuartoFK" class="control-label"></label>
-                <select asp-for="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK"></select>
-                <span asp-validation-for="QuartoFK" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <br/>
+                <br />
                 <input type="submit" value="Guardar" class="btn btn-primary" />
             </div>
         </form>
@@ -46,5 +41,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

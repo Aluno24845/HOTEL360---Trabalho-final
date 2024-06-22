@@ -121,6 +121,10 @@ namespace HOTEL360___Trabalho_final.Controllers {
             {
                 return NotFound();
             }
+
+            // Preencher o valor de PrecoAux para exibição
+            servico.PrecoAux = servico.Preco.ToString();
+
             return View(servico);
         }
 
@@ -129,7 +133,7 @@ namespace HOTEL360___Trabalho_final.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Descricao,Preco")] Servicos servico)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Descricao,Preco, PrecoAux")] Servicos servico)
         {
             if (id != servico.Id)
             {
@@ -140,6 +144,9 @@ namespace HOTEL360___Trabalho_final.Controllers {
             {
                 try
                 {
+                    //transferir o valor de PrecoAux para Preco
+                    servico.Preco = Convert.ToDecimal(servico.PrecoAux.Replace('.', ','));
+
                     _context.Update(servico);
                     await _context.SaveChangesAsync();
                 }

@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace HOTEL360___Trabalho_final.Controllers{
+namespace HOTEL360___Trabalho_final.Controllers
+{
 
     [Authorize]
     public class ReservasController : Controller
@@ -23,7 +24,8 @@ namespace HOTEL360___Trabalho_final.Controllers{
         /// </summary>
         private readonly UserManager<IdentityUser> _userManager;
 
-        public ReservasController(ApplicationDbContext context, UserManager<IdentityUser> userManager)  {
+        public ReservasController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        {
             _context = context;
             _userManager = userManager;
         }
@@ -40,8 +42,10 @@ namespace HOTEL360___Trabalho_final.Controllers{
         }
 
         // GET: Reservas/Details/5
-        public async Task<IActionResult> Details(int? id) {
-            if (id == null) {
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
                 return NotFound();
             }
 
@@ -58,21 +62,23 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 .Include(r => r.Quarto)
                 .Include(r => r.ListaServicos)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (reservas == null)   {
+            if (reservas == null)
+            {
                 return NotFound();
             };
-            
+
             return View(reservas);
         }
-                
+
         // GET: Reservas/Create
-        public IActionResult Create()  {
+        public IActionResult Create()
+        {
             // efetuar uma pesquisa na BD pelos Quartos
             // que podem estar associados à FK Quartos
             // SelectList -> cria uma lista de 'options' para a dropdown
             // Expressão LINQ para efetuar a pesquisa dos Quartos
             //    _context.Quartos.OrderBy(c=>c.Nome)
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Nome), "Id", "Nome");            
+            ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Nome), "Id", "Nome");
 
             // Obter a lista de serviços,
             // para enviar para a View
@@ -85,7 +91,8 @@ namespace HOTEL360___Trabalho_final.Controllers{
              * Aceder à lista de Hospedes se a pessoa que interage
              * é do Role GERENTES ou RECCECIONISTAS
              */
-            if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")) {
+            if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+            {
                 // efetuar uma pesquisa na BD pelos Hospedes
                 // que podem estar associados à FK Hospedes
                 // SelectList -> cria uma lista de 'options' para a dropdown
@@ -94,8 +101,8 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome");
 
             }
-            
-            
+
+
 
 
             //devolve controlo à View
@@ -114,14 +121,16 @@ namespace HOTEL360___Trabalho_final.Controllers{
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ValorPago,ValorPagoAux,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK, HospedeId")] Reservas reserva, int[] escolhaServicos)  {
+        public async Task<IActionResult> Create([Bind("Id,ValorPago,ValorPagoAux,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK, HospedeId")] Reservas reserva, int[] escolhaServicos)
+        {
 
             // var. auxiliar
             bool haErros = false;
-                         
+
             // No caso do Utilizador ser do role GERENTES ou RECCECIONISTA 
             // Verifica se escolheu um hospede para associar à Reserva
-            if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")){
+            if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+            {
 
                 //Validações
                 if (reserva.HospedeId == -1)
@@ -140,9 +149,10 @@ namespace HOTEL360___Trabalho_final.Controllers{
             }
 
             //Validações
-            if (reserva.QuartoFK == -1)  {
-            ModelState.AddModelError("", "Escolha um quarto, por favor.");
-            haErros = true;
+            if (reserva.QuartoFK == -1)
+            {
+                ModelState.AddModelError("", "Escolha um quarto, por favor.");
+                haErros = true;
             }
 
             if (escolhaServicos.Length == 0)
@@ -154,17 +164,21 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
 
 
-            if (ModelState.IsValid && !haErros) {
+            if (ModelState.IsValid && !haErros)
+            {
 
-                try  {
+                try
+                {
 
                     // associar os serviços escolhidos à Reserva
                     // criar uma Lista de serviços
                     var listaServicosNaRes = new List<Servicos>();
-                    foreach (var serv in escolhaServicos) {
+                    foreach (var serv in escolhaServicos)
+                    {
                         // procurar o Serviço na BD
                         var s = await _context.Servicos.FindAsync(serv);
-                        if (s != null) {
+                        if (s != null)
+                        {
                             listaServicosNaRes.Add(s);
                         }
                     }
@@ -174,7 +188,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
                     //transferir o valor de VAlorPagoAux para ValorPago
                     reserva.ValorPago = Convert.ToDecimal(reserva.ValorPagoAux.Replace('.', ','));
-                    
+
                     //adiciona os dados vindos da View à BD
                     _context.Add(reserva);
                     //efetua COMMIT na BD
@@ -183,7 +197,8 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     //redireciona o utilizador para a página Index
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)  {
+                catch (Exception ex)
+                {
                     // se cheguei aqui é pq aconteceu um problema
                     // crítico. TEM de ser tratado.
                     //    - devolver o controlo ao utilizador
@@ -193,7 +208,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     //    - etc.
                     throw;
                 }
-                
+
             }
             // Se chego aqui é pq alguma coisa correu mal
             // Vou devolver o controlo à View
@@ -223,6 +238,9 @@ namespace HOTEL360___Trabalho_final.Controllers{
             {
                 return NotFound();
             }
+
+            // Preencher o valor de ValorPagoAux para exibição
+            reserva.ValorPagoAux = reserva.ValorPago.ToString();
             ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reserva.QuartoFK);
             return View(reserva);
         }
@@ -232,68 +250,92 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ValorPago,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK")] Reservas reservas)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ValorPago,ValorPagoAux,DataCheckIN,DataCheckOUT")] Reservas reserva)
         {
-            if (id != reservas.Id)  {
+            if (id != reserva.Id)
+            {
                 return NotFound();
             }
+            var reservaGuardada = await _context.Reservas.FindAsync(id);
+            reservaGuardada.ValorPago = reserva.ValorPago;
+            reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
+            reservaGuardada.DataCheckIN = reserva.DataCheckIN;
+            reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
 
-            if (ModelState.IsValid)   {
+
+            if (ModelState.IsValid)
+            {
                 try
                 {
-                    _context.Update(reservas);
+
+                    //transferir o valor de VAlorPagoAux para ValorPago
+                    reservaGuardada.ValorPago = Convert.ToDecimal(reservaGuardada.ValorPagoAux.Replace('.', ','));
+
+                    // Atualiza a tabela 
+                    _context.Update(reservaGuardada);
+
+                    // Efetua COMMIT na BD
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)  {
-                    if (!ReservasExists(reservas.Id)) {
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ReservasExists(reserva.Id))
+                    {
                         return NotFound();
                     }
-                    else  {
+                    else
+                    {
                         throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reservas.QuartoFK);
-            return View(reservas);
+            ViewData["QuartoFK"] = new SelectList(_context.Quartos, "Id", "Id", reserva.QuartoFK);
+            return View(reserva);
         }
         /* apenas as pessoas autenticadas E que pertençam 
          * ao Role de GERENTES ou Role de RECCECIONISTA podem entrar */
-        [Authorize(Roles = "Gerentes, Reccecionistas")] 
+        [Authorize(Roles = "Gerentes, Reccecionistas")]
         // GET: Reservas/Delete/5
-        public async Task<IActionResult> Delete(int? id)  {
-            if (id == null)   {
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
                 return NotFound();
             }
 
-            var reservas = await _context.Reservas
+            var reserva = await _context.Reservas
                 .Include(r => r.Quarto)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (reservas == null)   {
+            if (reserva == null)
+            {
                 return NotFound();
             }
 
-            return View(reservas);
+            return View(reserva);
         }
 
         // POST: Reservas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id) {
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
 
             // Nas ações de DELETE também é crucial a existência
             // de Try Catch 
 
-            var reservas = await _context.Reservas.FindAsync(id);
-            if (reservas != null)  {
-                _context.Reservas.Remove(reservas);
+            var reserva = await _context.Reservas.FindAsync(id);
+            if (reserva != null)
+            {
+                _context.Reservas.Remove(reserva);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ReservasExists(int id)  {
+        private bool ReservasExists(int id)
+        {
             return _context.Reservas.Any(e => e.Id == id);
         }
     }
