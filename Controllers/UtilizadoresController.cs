@@ -13,9 +13,10 @@ using Microsoft.AspNetCore.Identity;
 namespace HOTEL360___Trabalho_final.Controllers{
 
     /* apenas as pessoas autenticadas E que pertençam 
-         * ao Role de GERENTE podem entrar */
+         * ao Role de GERENTES podem entrar */
     [Authorize(Roles = "Gerentes")]
     public class UtilizadoresController : Controller  {
+
         /// <summary>
         /// referência à BD do projeto
         /// </summary>
@@ -26,13 +27,19 @@ namespace HOTEL360___Trabalho_final.Controllers{
         /// </summary>
         public readonly IPasswordHasher<IdentityUser> _passwordHasher;
 
+        /// <summary>
+        ///  Objeto para interagir com a Autenticação
+        /// </summary>
         public readonly UserManager<IdentityUser> _userManager;
 
-        public UtilizadoresController(ApplicationDbContext context, IPasswordHasher<IdentityUser> passwordHasher, UserManager<IdentityUser> userManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+
+        public UtilizadoresController(ApplicationDbContext context, IPasswordHasher<IdentityUser> passwordHasher, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _passwordHasher = passwordHasher;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: Utilizadores
@@ -72,6 +79,8 @@ namespace HOTEL360___Trabalho_final.Controllers{
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Email, Password, ConfirmPassword,Nome,Telemovel,Avatar,DataNascimento,NIF, Tipo, NumReccecionista")] CriarUtilizadores criarutilizador)
         {
+           
+
             if (ModelState.IsValid)
             {
                 IdentityUser applicationUser = new IdentityUser();
