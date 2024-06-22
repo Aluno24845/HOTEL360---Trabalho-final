@@ -4,6 +4,7 @@ using HOTEL360___Trabalho_final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HOTEL360___Trabalho_final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240622101332_HospedeID_Reservas")]
+    partial class HospedeID_Reservas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,7 +74,10 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                     b.Property<DateTime>("DataReserva")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("HospedeId")
+                    b.Property<string>("HospedeId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("HospedeId1")
                         .HasColumnType("int");
 
                     b.Property<int>("QuartoFK")
@@ -85,7 +91,7 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HospedeId");
+                    b.HasIndex("HospedeId1");
 
                     b.HasIndex("QuartoFK");
 
@@ -420,9 +426,7 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                 {
                     b.HasOne("HOTEL360___Trabalho_final.Models.Hospedes", "Hospede")
                         .WithMany("ListaReservas")
-                        .HasForeignKey("HospedeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HospedeId1");
 
                     b.HasOne("HOTEL360___Trabalho_final.Models.Quartos", "Quarto")
                         .WithMany("ListaReservas")

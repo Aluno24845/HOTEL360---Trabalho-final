@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace HOTEL360___Trabalho_final.Controllers
-{
+namespace HOTEL360___Trabalho_final.Controllers{
+
+    /* apenas as pessoas autenticadas E que pertençam 
+         * ao Role de GERENTE podem entrar */
+    [Authorize(Roles = "Gerentes")]
     public class UtilizadoresController : Controller  {
         /// <summary>
         /// referência à BD do projeto
@@ -56,15 +60,15 @@ namespace HOTEL360___Trabalho_final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Telemovel,Avatar,DataNascimento,UserId")] Utilizadores utilizadores)
+        public async Task<IActionResult> Create([Bind("Id,Email, Password, ConfirmPassord, Nome,Telemovel,Avatar,DataNascimento,UserId")] CriarUtilizadores criarutilizador)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(utilizadores);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //_context.Add(criarutilizador);
+                //await _context.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
             }
-            return View(utilizadores);
+            return View(criarutilizador);
         }
 
         // GET: Utilizadores/Edit/5

@@ -9,6 +9,7 @@ using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace HOTEL360___Trabalho_final.Controllers{
 
@@ -59,8 +60,8 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reservas == null)   {
                 return NotFound();
-            }
-
+            };
+            
             return View(reservas);
         }
                 
@@ -71,7 +72,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
             // SelectList -> cria uma lista de 'options' para a dropdown
             // Expressão LINQ para efetuar a pesquisa dos Quartos
             //    _context.Quartos.OrderBy(c=>c.Nome)
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Nome), "Id", "Nome");
+            ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Nome), "Id", "Nome");            
 
             // Obter a lista de serviços,
             // para enviar para a View
@@ -79,6 +80,23 @@ namespace HOTEL360___Trabalho_final.Controllers{
             // em LINQ:
             var listaSer = _context.Servicos.OrderBy(p => p.Nome).ToList();
             ViewData["listaServicos"] = listaSer;
+
+            /*
+             * Aceder à lista de Hospedes se a pessoa que interage
+             * é do Role GERENTES
+             */
+            if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")) {
+                // efetuar uma pesquisa na BD pelos Hospedes
+                // que podem estar associados à FK Hospedes
+                // SelectList -> cria uma lista de 'options' para a dropdown
+                // Expressão LINQ para efetuar a pesquisa dos Quartos
+                //    _context.Hosdes.OrderBy(c=>c.Nome)
+                ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome");
+
+            }
+            
+            
+
 
             //devolve controlo à View
             return View();
@@ -96,21 +114,37 @@ namespace HOTEL360___Trabalho_final.Controllers{
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ValorPago,ValorPagoAux,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK")] Reservas reserva, int[] escolhaServicos)  {
+        public async Task<IActionResult> Create([Bind("Id,ValorPago,ValorPagoAux,DataReserva,DataCheckIN,DataCheckOUT,QuartoFK, HospedeId")] Reservas reserva, int[] escolhaServicos)  {
 
             // var. auxiliar
             bool haErros = false;
+                         
+            if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")){
+                //Validações
+                if (reserva.HospedeId == -1)
+                {
+                    ModelState.AddModelError("", "Escolha um hospede, por favor.");
+                    haErros = true;
+                }
+            }
+            else
+            {
+                var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var utilizador = await _context.Utilizadores
+               .FirstOrDefaultAsync(m => m.UserId == user);
+                reserva.HospedeId = utilizador.Id;
+            }
 
             //Validações
             if (reserva.QuartoFK == -1)  {
-                ModelState.AddModelError("", "Escolha um quarto, por favor.");
-                haErros = true;
+            ModelState.AddModelError("", "Escolha um quarto, por favor.");
+            haErros = true;
             }
 
             if (escolhaServicos.Length == 0)
             {
                 // não escolhi nenhum serviço
-                ModelState.AddModelError("", "Escolha um serviço, pf.");
+                ModelState.AddModelError("", "Escolha um serviço, por favor.");
                 haErros = true;
             }
 
@@ -136,7 +170,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
 
                     //transferir o valor de VAlorPagoAux para ValorPago
                     reserva.ValorPago = Convert.ToDecimal(reserva.ValorPagoAux.Replace('.', ','));
-
+                    
                     //adiciona os dados vindos da View à BD
                     _context.Add(reserva);
                     //efetua COMMIT na BD

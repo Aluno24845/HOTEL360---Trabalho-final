@@ -63,7 +63,15 @@
                 }
             </ul>
         </dd>
-    
+        @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")) {
+            <dt class="col-sm-2">
+                Hospede
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Hospede.Nome)
+            </dd>
+        }
+
     </dl>
 </div>
 <div>
