@@ -63,6 +63,14 @@ namespace HOTEL360___Trabalho_final.Models{
         [StringLength(50)] // define o tamanho máximo como 50 caracteres
         public string? Imagem { get; set; } // o ? torna o preenchimento facultativo
 
+        /// <summary>
+        /// Localização do Quarto
+        /// </summary>
+        [Display(Name = "Localização")]
+        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório")]
+        [StringLength(255)]
+        public string Localizacao { get; set; }
+
         /* ************************************************
        * Vamos criar as Relações (FKs) com outras tabelas
        * *********************************************** */

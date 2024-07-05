@@ -74,7 +74,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Capacidade,Preco,PrecoAux,Descricao,Imagem")] Quartos quarto, IFormFile ImagemLogo) {
+        public async Task<IActionResult> Create([Bind("Id,Nome,Capacidade,Preco,PrecoAux,Descricao,Imagem, Localizacao")] Quartos quarto, IFormFile ImagemLogo) {
 
             /* Algoritmo
           * 1- há ficheiro?
@@ -224,7 +224,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Capacidade,Preco,PrecoAux,Descricao,Imagem")] Quartos quarto, IFormFile ImagemLogo) {
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Capacidade,Preco,PrecoAux,Descricao,Imagem, Localizacao")] Quartos quarto, IFormFile ImagemLogo) {
             if (id != quarto.Id)  {
                 return NotFound();
             }
