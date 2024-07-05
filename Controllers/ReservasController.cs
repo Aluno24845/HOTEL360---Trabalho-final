@@ -191,6 +191,12 @@ namespace HOTEL360___Trabalho_final.Controllers
                     //transferir o valor de VAlorPagoAux para ValorPago
                     reserva.ValorPago = Convert.ToDecimal(reserva.ValorPagoAux.Replace('.', ','));
 
+                    // Calcula o valor total
+                    reserva.ValorTotal = CalcularValorTotal(reserva);
+
+                    // Calcula o valor que ainda falta pagar
+                    reserva.ValorAPagar = reserva.ValorTotal - reserva.ValorPago;
+
                     //adiciona os dados vindos da View à BD
                     _context.Add(reserva);
                     //efetua COMMIT na BD
@@ -351,6 +357,28 @@ namespace HOTEL360___Trabalho_final.Controllers
                     reservaGuardada.ListaServicos = listaServicosNaRes;
 
 
+                    // Calcula o nº de noites no hotel 
+                    TimeSpan duracao = reservaGuardada.DataCheckOUT - reservaGuardada.DataCheckIN;
+                    int numeroDeNoites = (int)duracao.TotalDays;
+
+                    // Procura o objeto Quartos utilizando o Id (QuartoFK) da reserva
+                    var quarto = _context.Quartos.FirstOrDefault(q => q.Id == reservaGuardada.QuartoFK);
+
+                    // Calcular o valor do quarto
+                    decimal valorQuarto = numeroDeNoites * quarto.Preco;
+
+                    // Calcular o valor dos serviços
+                    decimal valorServicos = 0;
+                    foreach (var serv in reservaGuardada.ListaServicos) {                        
+                            valorServicos += serv.Preco * numeroDeNoites;                        
+                    }
+
+                    // Calcular o ValorTotal
+                    reservaGuardada.ValorTotal = valorQuarto + valorServicos;
+
+                    // Calcula o valor que ainda falta pagar
+                    reservaGuardada.ValorAPagar = reservaGuardada.ValorTotal - reservaGuardada.ValorPago;
+
                     // Atualiza a tabela 
                     _context.Update(reservaGuardada);
 
@@ -388,7 +416,10 @@ namespace HOTEL360___Trabalho_final.Controllers
 
             var reserva = await _context.Reservas
                 .Include(r => r.Quarto)
+                .Include(r => r.ListaServicos)
+                .Include(r => r.Hospede) // Incluir o Hospede na consulta
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (reserva == null)
             {
                 return NotFound();
@@ -419,6 +450,33 @@ namespace HOTEL360___Trabalho_final.Controllers
         private bool ReservasExists(int id)
         {
             return _context.Reservas.Any(e => e.Id == id);
+        }
+
+        // Método auxiliar para calcular o valor total
+        private decimal CalcularValorTotal(Reservas reserva)
+        {
+            decimal valorTotal = 0;
+
+            // Calcula o nº de noites no hotel 
+            TimeSpan duracao = reserva.DataCheckOUT - reserva.DataCheckIN;
+            int numeroDeNoites = (int)duracao.TotalDays;
+
+            // Procura o objeto Quartos utilizando o Id (QuartoFK) da reserva
+            var quarto = _context.Quartos.FirstOrDefault(q => q.Id == reserva.QuartoFK);
+
+            // Calcula o valor do quarto por noite * nº de noites 
+            valorTotal += numeroDeNoites * quarto.Preco;
+
+            // Calcula o valor dos serviços
+            if (reserva.ListaServicos != null)
+            {
+                foreach (var servico in reserva.ListaServicos)
+                {
+                    valorTotal += (servico.Preco * numeroDeNoites);
+                }
+            }
+
+            return valorTotal;
         }
     }
 }
