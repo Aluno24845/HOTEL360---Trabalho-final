@@ -13,25 +13,25 @@
             @Html.DisplayNameFor(model => model.ValorPago)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValorPago)
+            @Html.DisplayFor(model => model.ValorPago)€
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DataReserva)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataReserva)
+        <dd class="col-sm-10">
+            @Model.DataReserva.ToString("dd/MM/yyyy HH:mm")
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DataCheckIN)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataCheckIN)
+        <dd class="col-sm-10">
+            @Model.DataCheckIN.ToString("dd/MM/yyyy HH:mm")
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DataCheckOUT)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataCheckOUT)
+        <dd class="col-sm-10">
+            @Model.DataCheckOUT.ToString("dd/MM/yyyy HH:mm")
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Quarto)
@@ -68,7 +68,7 @@
                 Hospede
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.HospedeId)
+                @Html.DisplayFor(model => model.Hospede.Nome)
             </dd>
         }
 

@@ -42,7 +42,7 @@
                 @Html.DisplayFor(modelItem => item.Capacidade)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Preco)
+                @Html.DisplayFor(modelItem => item.Preco)€
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Descricao)
@@ -50,13 +50,8 @@
             <td>
                     @* vou mudar o nome da imagem para a imagem,
                 propriamente dita
-                *@
-
-                    <img src="~/Imagens/@Html.DisplayFor(modelItem => item.Imagem)"
-                         alt="imagem do quarto @Html.DisplayFor(modelItem => item.Nome)"
-                         title="@Html.DisplayFor(modelItem => item.Nome)"
-                         width="100px" />
-                    @*outra forma de mostrar a imagem, usando a variável do ForEach*@
+                *@                    
+                    @*uma forma de mostrar a imagem, usando a variável do ForEach*@
                     <img src="~/Imagens/@item.Imagem"
                          alt="imagem do quarto @item.Nome"
                          title="@item.Nome"

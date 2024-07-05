@@ -20,14 +20,50 @@
             </div>
             <div class="form-group">
                 <label asp-for="DataCheckIN" class="control-label"></label>
-                <input asp-for="DataCheckIN" class="form-control" />
+                <input asp-for="DataCheckIN" class="form-control" type="datetime-local" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
                 <span asp-validation-for="DataCheckIN" class="text-danger"></span>
+
             </div>
             <div class="form-group">
                 <label asp-for="DataCheckOUT" class="control-label"></label>
-                <input asp-for="DataCheckOUT" class="form-control" />
+                <input asp-for="DataCheckOUT" class="form-control" type="datetime-local" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")" />
                 <span asp-validation-for="DataCheckOUT" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Quarto" class="control-label"></label>
+                <select asp-for="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK">
+                    <option value="-1">-- Escolha um quarto --</option>
+                </select>
+            </div>
+
+            @* listar os serviços *@
+            <div class="form-group">
+                <label class="control-label">Serviços</label>
+                @foreach (var serv in (List<Servicos>)ViewData["listaServicos"] ?? Enumerable.Empty<Servicos>())
+                {
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               value="@serv.Id"
+                               name="escolhaServicos"
+                        @(((List<int>)ViewData["servicosSelecionados"]).Contains(serv.Id) ? "checked" : "")>
+                        <label class="form-check-label" for="flexCheckDefault">
+                            @serv.Nome
+                        </label>
+                    </div>
+                }
+            </div>
+
+            @* Caso seja um Gerente ou um Reccecionista escolhe o Hospede para associar à reserva*@
+            @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+            {
+                <div class="form-group">
+                    <label asp-for="Hospede" class="control-label"></label>
+                    <select asp-for="HospedeId" class="form-control" asp-items="ViewBag.HospedeId">
+                        <option value="-1">-- Escolha um hospede --</option>
+                    </select>
+                </div>
+            }
             <div class="form-group">
                 <br />
                 <input type="submit" value="Guardar" class="btn btn-primary" />
