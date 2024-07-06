@@ -8,7 +8,7 @@
 <h2>Criar uma nova conta.</h2>
 <hr />
 
-<form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+<form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
     <div class="row">
@@ -52,11 +52,19 @@
                 <span asp-validation-for="Input.Hospede.Telemovel" class="text-danger"></span>
             </div>
 
-            <div class="form-floating mb-2">
-                <input asp-for="Input.Hospede.Avatar" class="form-control" aria-required="true" />
-                <label asp-for="Input.Hospede.Avatar"></label>
-                <span asp-validation-for="Input.Hospede.Avatar" class="text-danger"></span>
+
+
+
+
+
+            <div class="form-group mb-2">
+                <label asp-for="Input.Hospede.Avatar" class="control-label"></label>
+                <input type="file" name="Input.AvatarFile" accept=".png, .jpg, .jpeg" class="form-control" aria-required="true" />
             </div>
+
+
+
+
 
             <div class="form-floating mb-2">
                 <input asp-for="Input.Hospede.NIF" class="form-control" aria-required="true" />

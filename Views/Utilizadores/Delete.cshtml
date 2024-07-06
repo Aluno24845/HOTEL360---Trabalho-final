@@ -25,21 +25,18 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Avatar)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Avatar)
+        <dd class="col-sm-10">
+            <img src="~/Imagens/@Html.DisplayFor(model => model.Avatar)"
+                 alt="avatar do utilizador @Html.DisplayFor(model => model.Nome)"
+                 title="@Html.DisplayFor(model => model.Nome)"
+                 width="100px" />
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DataNascimento)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DataNascimento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
+        </dd>        
     </dl>
     
     <form asp-action="Delete">

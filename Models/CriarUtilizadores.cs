@@ -52,7 +52,8 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Nome do ficheiro que contém o avatar do Utilizador
         /// </summary>
-        public string Avatar { get; set; }
+        [StringLength(50)] // define o tamanho máximo como 50 caracteres
+        public string? Avatar { get; set; } // o ? torna o preenchimento facultativo  
 
         /// <summary>
         /// Data de nascimento do Utilizador

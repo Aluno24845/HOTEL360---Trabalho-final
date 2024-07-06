@@ -37,7 +37,14 @@
                 @Html.DisplayFor(modelItem => item.Telemovel)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Avatar)
+                @* vou mudar o nome da imagem para a imagem,
+            propriamente dita
+            *@
+                @*uma forma de mostrar a imagem, usando a variável do ForEach*@
+                <img src="~/Imagens/@item.Avatar"
+                        alt="Avatar do utilizador @item.Nome"
+                        title="@item.Nome"
+                        width="100px" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DataNascimento)

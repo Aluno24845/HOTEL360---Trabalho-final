@@ -76,24 +76,24 @@ namespace HOTEL360___Trabalho_final.Controllers{
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nome,Capacidade,Preco,PrecoAux,Descricao,Imagem, Localizacao")] Quartos quarto, IFormFile ImagemLogo) {
 
-            /* Algoritmo
-          * 1- há ficheiro?
-          *    1.1 - não há ficheiro!
-          *          devolver à view dizendo que o ficheiro
-          *          é obrigatório
-          *    1.2 - há ficheiro!
-          *          Mas, é uma imagem (PNG, JPG)?
-          *          1.2.1 - não é PNG nem JPG
-          *                  devolver o controlo à View
-          *                  e pedir PNG ou JPG
-          *          1.2.2 - é uma imagem
-          *                  - determinar o nome a atribuir 
-          *                    ao ficheiro
-          *                  - escrever esse nome na BD
-          *                  - se a escrita na BD se concretizar
-          *                    é que o ficheiro é guardado no 
-          *                    disco rígido
-          */
+        /* Algoritmo
+        * 1- há ficheiro?
+        *    1.1 - não há ficheiro!
+        *          devolver à view dizendo que o ficheiro
+        *          é obrigatório
+        *    1.2 - há ficheiro!
+        *          Mas, é uma imagem (PNG, JPG)?
+        *          1.2.1 - não é PNG nem JPG
+        *                  devolver o controlo à View
+        *                  e pedir PNG ou JPG
+        *          1.2.2 - é uma imagem
+        *                  - determinar o nome a atribuir 
+        *                    ao ficheiro
+        *                  - escrever esse nome na BD
+        *                  - se a escrita na BD se concretizar
+        *                    é que o ficheiro é guardado no 
+        *                    disco rígido
+        */
 
             // vars. auxiliares
             string nomeImagem = "";
