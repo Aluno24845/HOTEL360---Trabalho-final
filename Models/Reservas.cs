@@ -51,7 +51,6 @@ namespace HOTEL360___Trabalho_final.Models{
         /// Data em que foi feita a reserva
         /// </summary>
         [Display(Name = "Data da reserva")]
-        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório.")]
         [DisplayFormat(ApplyFormatInEditMode = true,
                      DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime DataReserva {  get; set; }

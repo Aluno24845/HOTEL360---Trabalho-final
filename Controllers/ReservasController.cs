@@ -171,6 +171,8 @@ namespace HOTEL360___Trabalho_final.Controllers
 
                 try
                 {
+                    // Define a Data da Reserva como a data atual
+                    reserva.DataReserva = DateTime.Now; 
 
                     // associar os serviços escolhidos à Reserva
                     // criar uma Lista de serviços
@@ -197,6 +199,24 @@ namespace HOTEL360___Trabalho_final.Controllers
                     // Calcula o valor que ainda falta pagar
                     reserva.ValorAPagar = reserva.ValorTotal - reserva.ValorPago;
 
+                    //Verifica se o Valor Pago é superior ao Valor Total
+                    if (reserva.ValorPago > reserva.ValorTotal){
+                        ModelState.AddModelError("", "O Valor Pago não pode ser superior ao valor Total!");
+
+                        // Recarregar as listas e devolve o controlo à View
+                        ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Nome), "Id", "Nome", reserva.QuartoFK);
+                        var listaServicos = _context.Servicos.OrderBy(p => p.Nome).ToList();
+                        ViewData["listaServicos"] = listaServicos;
+
+                        if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+                        {
+                            ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome", reserva.HospedeId);
+                        }
+
+                        return View(reserva);
+                    }
+
+                   
                     //adiciona os dados vindos da View à BD
                     _context.Add(reserva);
                     //efetua COMMIT na BD
@@ -221,7 +241,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             // Se chego aqui é pq alguma coisa correu mal
             // Vou devolver o controlo à View
             // Tenho de preparar os dados a enviar
-            ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Id), "Id", "Id", reserva.QuartoFK);
+            ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Nome), "Id", "Nome", reserva.QuartoFK);
 
             var listaSer = _context.Servicos.OrderBy(p => p.Nome).ToList();
             ViewData["listaServicos"] = listaSer;
@@ -378,6 +398,25 @@ namespace HOTEL360___Trabalho_final.Controllers
 
                     // Calcula o valor que ainda falta pagar
                     reservaGuardada.ValorAPagar = reservaGuardada.ValorTotal - reservaGuardada.ValorPago;
+
+                    // Verifica se o Valor Pago é superior ao Valor Total
+                    if (reservaGuardada.ValorPago > reservaGuardada.ValorTotal)
+                    {
+                        ModelState.AddModelError("", "O Valor Pago não pode ser superior ao valor Total!");
+
+                        // Recarregar as listas e devolve o controlo à View
+                        ViewData["QuartoFK"] = new SelectList(_context.Quartos.OrderBy(q => q.Nome), "Id", "Nome", reservaGuardada.QuartoFK);
+                        var listaServicos = _context.Servicos.OrderBy(p => p.Nome).ToList();
+                        ViewData["listaServicos"] = listaServicos;
+                        ViewData["servicosSelecionados"] = reservaGuardada.ListaServicos.Select(s => s.Id).ToList();
+
+                        if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+                        {
+                            ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome", reservaGuardada.HospedeId);
+                        }
+
+                        return View(reservaGuardada);
+                    }
 
                     // Atualiza a tabela 
                     _context.Update(reservaGuardada);
