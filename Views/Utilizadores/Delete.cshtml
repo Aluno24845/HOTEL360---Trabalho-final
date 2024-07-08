@@ -4,44 +4,53 @@
     ViewData["Title"] = "Apagar Utilizador";
 }
 
-<h1>Apagar Utilizador</h1>
+<br />
+<h1 style="color: #fff;">Apagar Utilizador</h1>
+<h3 style="color: #fff;">Tem a certeza que pretende eliminar este utilizador?</h3>
 
-<h3>Tem a certeza que pretende eliminar este utilizador?</h3>
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telemovel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telemovel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Avatar)
-        </dt>
-        <dd class="col-sm-10">
-            <img src="~/Imagens/@Html.DisplayFor(model => model.Avatar)"
-                 alt="avatar do utilizador @Html.DisplayFor(model => model.Nome)"
-                 title="@Html.DisplayFor(model => model.Nome)"
-                 width="100px" />
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataNascimento)
-        </dd>        
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Apagar" class="btn btn-danger" /> |
-        <a asp-action="Index">Regressar à listagem de Utilizadores</a>
-    </form>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="row no-gutters">
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-8">
+                                @Html.DisplayNameFor(model => model.Nome)
+                            </dt>
+                            <dd class="col-sm-4">
+                                @Html.DisplayFor(model => model.Nome)
+                            </dd>
+                            <dt class="col-sm-8">
+                                @Html.DisplayNameFor(model => model.Telemovel)
+                            </dt>
+                            <dd class="col-sm-4">
+                                @Html.DisplayFor(model => model.Telemovel)
+                            </dd>
+                            <dt class="col-sm-8">
+                                @Html.DisplayNameFor(model => model.Avatar)
+                            </dt>
+                            <dd class="col-sm-4">
+                                <img src="~/Imagens/@Html.DisplayFor(model => model.Avatar)"
+                                     alt="avatar do utilizador @Html.DisplayFor(model => model.Nome)"
+                                     title="@Html.DisplayFor(model => model.Nome)"
+                                     width="100px" />
+                            </dd>
+                            <dt class="col-sm-8">
+                                @Html.DisplayNameFor(model => model.DataNascimento)
+                            </dt>
+                            <dd class="col-sm-4">
+                                @Html.DisplayFor(model => model.DataNascimento)
+                            </dd>
+                        </dl>
+                        <form asp-action="Delete">
+                            <input type="hidden" asp-for="Id" />
+                            <input type="submit" value="Apagar" class="btn btn-danger" /> 
+                            <a class="btn btn-secondary" asp-action="Index">Regressar à listagem de Utilizadores</a>
+                        </form>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
 </div>

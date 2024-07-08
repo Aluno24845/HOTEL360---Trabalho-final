@@ -70,12 +70,26 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 return NotFound();
             }
 
+            // Carregar o utilizador incluindo os dados do ASP.NET Identity (AspNetUsers)
             var utilizador = await _context.Utilizadores
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (utilizador == null)
             {
                 return NotFound();
             }
+
+            // Buscar o email do utilizador a partir do ASP.NET Identity (AspNetUsers)
+            var userEmail = await _context.Users
+                .Where(u => u.Id == utilizador.UserId)
+                .Select(u => u.Email)
+                .FirstOrDefaultAsync();
+
+            if (userEmail == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["UserEmail"] = userEmail;
 
             return View(utilizador);
         }
@@ -294,7 +308,27 @@ namespace HOTEL360___Trabalho_final.Controllers{
             {
                 return NotFound();
             }
-            return View(utilizador);
+
+            // Carrega o utilizador da tabela AspNetUsers pelo UserId do utilizador
+            var user = await _userManager.FindByIdAsync(utilizador.UserId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Cria um modelo para a edição com os dados do utilizador e UserId
+            var model = new Utilizadores
+            {
+                Id = utilizador.Id,
+                Nome = utilizador.Nome,
+                Telemovel = utilizador.Telemovel,
+                Avatar = utilizador.Avatar,
+                DataNascimento = utilizador.DataNascimento,
+                UserId = user.Id // Passa o UserId para o modelo
+            };
+
+            return View(model);
+
         }
 
         // POST: Utilizadores/Edit/5
@@ -302,7 +336,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telemovel,Avatar,DataNascimento")] Utilizadores utilizador, IFormFile ImagemLogo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telemovel,Avatar,DataNascimento,UserId")] Utilizadores utilizador, IFormFile ImagemLogo)
         {
             if (id != utilizador.Id)
             {
@@ -390,6 +424,19 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 _context.Utilizadores.Remove(utilizador);
             }
 
+            // Encontra o utilizador na tabela AspNetUsers pelo Id do Utilizador
+            var user = await _userManager.FindByIdAsync(utilizador.UserId);
+            if (user != null)
+            {
+                // Remove o utilizador da tabela AspNetUsers
+                var result = await _userManager.DeleteAsync(user);
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "Erro a excluir utilizador.");
+                }
+            }
+
+            // Salva as alterações na base de dados
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
