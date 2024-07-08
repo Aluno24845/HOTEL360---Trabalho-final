@@ -12,7 +12,15 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />            
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" id="DataCheckINHidden" name="DataCheckINHidden" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
+            <input type="hidden" id="DataCheckOUTHidden" name="DataCheckOUTHidden" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")">
+
+            <div class="form-group">
+                <label asp-for="DataReserva" class="control-label"></label>
+                <span class="form-control">@Model.DataReserva.ToString("dd/MM/yyyy")</span>
+            </div> 
+
             <div class="form-group">
                 <label asp-for="ValorPagoAux" class="control-label"></label>
                 <input asp-for="ValorPagoAux" class="form-control" />
@@ -20,13 +28,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="DataCheckIN" class="control-label"></label>
-                <input asp-for="DataCheckIN" class="form-control" type="datetime-local" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
+                <input asp-for="DataCheckIN" id="dataCheckIN" class="form-control" type="datetime-local" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
                 <span asp-validation-for="DataCheckIN" class="text-danger"></span>
 
             </div>
             <div class="form-group">
                 <label asp-for="DataCheckOUT" class="control-label"></label>
-                <input asp-for="DataCheckOUT" class="form-control" type="datetime-local" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")" />
+                <input asp-for="DataCheckOUT" id="dataCheckOUT" class="form-control" type="datetime-local" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")" />
                 <span asp-validation-for="DataCheckOUT" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -77,7 +85,72 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dataCheckIN = document.getElementById("dataCheckIN");
+            const dataCheckOUT = document.getElementById("dataCheckOUT");
+            const DataCheckINHidden = document.getElementById("DataCheckINHidden").value;
+            const DataCheckOUTHidden = document.getElementById("DataCheckOUTHidden").value;
+            const dataAtual = new Date();
+            const dataCheckINDate = new Date(DataCheckINHidden);
+            const dataCheckOUTDate = new Date(DataCheckOUTHidden);
+
+            // Verifica se a data de Check-In já passou da data atual
+            if (dataCheckINDate < dataAtual) {
+                dataCheckIN.disabled = true;
+            }
+
+            // Verifica se a data de Check-Out já passou da data atual
+            if (dataCheckOUTDate < dataAtual) {
+                dataCheckOUT.disabled = true;
+            }
+
+            // Reativa o campo antes do envio do formulário para enviar o valor original ao servidor
+            document.querySelector("form").addEventListener("submit", function () {
+                if (dataCheckIN.disabled) {
+                    dataCheckIN.disabled = false;
+                    dataCheckIN.value = DataCheckINHidden; // Envia o valor original ao servidor
+                }
+                if (dataCheckOUT.disabled) {
+                    dataCheckOUT.disabled = false;
+                    dataCheckOUT.value = DataCheckOUTHidden; // Envia o valor original ao servidor
+                }
+            });
+
+            dataCheckIN.addEventListener("change", function () {
+                const checkInDate = new Date(dataCheckIN.value);
+
+                // Verificação da data atual comparando com Data de Check-IN
+                if (checkInDate < dataAtual) {
+                    alert("A data de Check-In não pode ser antes da Data Atual");
+                    dataCheckIN.value = ''; // Limpa o valor se estiver fora do permitido
+                    return;
+                }
+
+                // Restrição de horário para check-in entre 8h e 23h
+                if (checkInDate.getHours() < 8 || checkInDate.getHours() >= 23) {
+                    alert("A hora de check-in deve estar entre 8h e 23h.");
+                    dataCheckIN.value = ''; // Limpa o valor se estiver fora do horário permitido
+                    return;
+                }
+
+                checkInDate.setDate(checkInDate.getDate() + 1); // Incrementa o dia em 1
+                checkInDate.setHours(5, 0, 0, 0); // Define a hora para 5h da manhã do dia seguinte
+                const minCheckOutDate = checkInDate.toISOString().slice(0, 16); // Formata a data para datetime-local
+                dataCheckOUT.min = minCheckOutDate;
+            });
+
+            dataCheckOUT.addEventListener("change", function () {
+                const checkOutDate = new Date(dataCheckOUT.value);
+
+                // Restrição de horário para check-out entre 5h e 17h
+                if (checkOutDate.getHours() < 5 || checkOutDate.getHours() >= 17) {
+                    alert("A hora de check-out deve estar entre 5h e 17h.");
+                    dataCheckOUT.value = ''; // Limpa o valor se estiver fora do horário permitido
+                    return;
+                }
+            });
+        });
+    </script>
 }

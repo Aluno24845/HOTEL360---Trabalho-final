@@ -23,12 +23,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="DataCheckIN" class="control-label"></label>
-                <input asp-for="DataCheckIN" class="form-control" />
+                <input asp-for="DataCheckIN" id="dataCheckIN" class="form-control" type="datetime-local" />
                 <span asp-validation-for="DataCheckIN" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DataCheckOUT" class="control-label"></label>
-                <input asp-for="DataCheckOUT" class="form-control" />
+                <input asp-for="DataCheckOUT" id="dataCheckOUT" class="form-control" type="datetime-local" />
                 <span asp-validation-for="DataCheckOUT" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -79,5 +79,38 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dataCheckIN = document.getElementById("dataCheckIN");
+            const dataCheckOUT = document.getElementById("dataCheckOUT");
+
+            dataCheckIN.addEventListener("change", function () {
+                const checkInDate = new Date(dataCheckIN.value);
+
+                // Restrição de horário para check-in entre 8h e 23h
+                if (checkInDate.getHours() < 8 || checkInDate.getHours() >= 23) {
+                    alert("A hora de check-in deve estar entre 8h e 23h.");
+                    dataCheckIN.value = ''; // Limpa o valor se estiver fora do horário permitido
+                    return;
+                }
+
+                checkInDate.setDate(checkInDate.getDate() + 1); // Incrementa o dia em 1
+                checkInDate.setHours(5, 0, 0, 0); // Define a hora para 5h da manhã do dia seguinte
+                const minCheckOutDate = checkInDate.toISOString().slice(0, 16); // Formata a data para datetime-local
+                dataCheckOUT.min = minCheckOutDate;
+            });
+
+            dataCheckOUT.addEventListener("change", function () {
+                const checkOutDate = new Date(dataCheckOUT.value);
+
+                // Restrição de horário para check-out entre 5h e 17h
+                if (checkOutDate.getHours() < 5 || checkOutDate.getHours() >= 17) {
+                    alert("A hora de check-out deve estar entre 5h e 17h.");
+                    dataCheckOUT.value = ''; // Limpa o valor se estiver fora do horário permitido
+                    return;
+                }
+            });
+        });
+    </script>
 }
