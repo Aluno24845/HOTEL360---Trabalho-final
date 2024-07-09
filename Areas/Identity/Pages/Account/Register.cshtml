@@ -4,82 +4,89 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>Registar novo utilizador</h1>
-<h2>Criar uma nova conta.</h2>
-<hr />
+<br />
+<h1 style="color: #fff;">Registar novo utilizador</h1>
 
-<form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+<div class="row">
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="row no-gutters">
+                <div class="col-md-12">
+                    <div class="card-body">
+                        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                        <label asp-for="Input.Email">Email</label>
+                                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                        <label asp-for="Input.Password">Password</label>
+                                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                        <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-8 col-md-offset-2">
+                                    @* vamos aqui recolher os dados específicos do Hospede *@
+                                    <div class="form-floating mb-2">
+
+                                        <input asp-for="Input.Hospede.Nome" class="form-control" aria-required="true" />
+                                        <label asp-for="Input.Hospede.Nome"></label>
+                                        <span asp-validation-for="Input.Hospede.Nome" class="text-danger"></span>
+
+                                    </div>
+
+                                    <div class="form-floating mb-2">
+                                        <input asp-for="Input.Hospede.DataNascimento" class="form-control" aria-required="true" />
+                                        <label asp-for="Input.Hospede.DataNascimento"></label>
+                                        <span asp-validation-for="Input.Hospede.DataNascimento" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-floating mb-2">
+                                        <input asp-for="Input.Hospede.Telemovel" class="form-control" aria-required="true" />
+                                        <label asp-for="Input.Hospede.Telemovel"></label>
+                                        <span asp-validation-for="Input.Hospede.Telemovel" class="text-danger"></span>
+                                    </div>
+
+
+                                    <div class="form-group mb-2">
+                                        <label asp-for="Input.Hospede.Avatar" class="control-label"></label>
+                                        <input type="file" name="Input.AvatarFile" accept=".png, .jpg, .jpeg" class="form-control" aria-required="true" />
+                                    </div>
+
+
+                                    <div class="form-floating mb-2">
+                                        <input asp-for="Input.Hospede.NIF" class="form-control" aria-required="true" />
+                                        <label asp-for="Input.Hospede.NIF"></label>
+                                        <span asp-validation-for="Input.Hospede.NIF" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-4">
+                                    <br />
+                                    <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registar</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-md-offset-2">
-            @* vamos aqui recolher os dados específicos do Hospede *@
-            <div class="form-floating mb-2">
-                    
-                <input asp-for="Input.Hospede.Nome" class="form-control" aria-required="true" />                    
-                <label asp-for="Input.Hospede.Nome"></label>
-                <span asp-validation-for="Input.Hospede.Nome" class="text-danger"></span>
-                    
-            </div>
-                               
-            <div class="form-floating mb-2">
-                <input asp-for="Input.Hospede.DataNascimento" class="form-control" aria-required="true" />
-                <label asp-for="Input.Hospede.DataNascimento"></label>
-                <span asp-validation-for="Input.Hospede.DataNascimento" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-2">
-                <input asp-for="Input.Hospede.Telemovel" class="form-control" aria-required="true" />
-                <label asp-for="Input.Hospede.Telemovel"></label>
-                <span asp-validation-for="Input.Hospede.Telemovel" class="text-danger"></span>
-            </div>
-
-
-
-
-
-
-            <div class="form-group mb-2">
-                <label asp-for="Input.Hospede.Avatar" class="control-label"></label>
-                <input type="file" name="Input.AvatarFile" accept=".png, .jpg, .jpeg" class="form-control" aria-required="true" />
-            </div>
-
-
-
-
-
-            <div class="form-floating mb-2">
-                <input asp-for="Input.Hospede.NIF" class="form-control" aria-required="true" />
-                <label asp-for="Input.Hospede.NIF"></label>
-                <span asp-validation-for="Input.Hospede.NIF" class="text-danger"></span>
-            </div>
-                
-        </div>
-        <div class="col-md-4">
-            <br />
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registar</button>
         </div>
     </div>
+</div>
 
-</form>
+
+
 
 @section Scripts {
 <partial name="_ValidationScriptsPartial" />

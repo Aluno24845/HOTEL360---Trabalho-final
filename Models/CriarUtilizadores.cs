@@ -37,7 +37,7 @@ namespace HOTEL360___Trabalho_final.Models{
         /// Nome do Utilizador
         /// </summary>
         [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
-        [StringLength(100)]
+        [StringLength(50)]
         public string Nome { get; set; }
 
         /// <summary>
@@ -68,6 +68,7 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Tipo de Utilizador
         /// </summary>
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
         public string Tipo { get; set; }
 
         /// <summary>

@@ -38,7 +38,9 @@ namespace HOTEL360___Trabalho_final.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            var listaRsvs = _context.Reservas.Include(r => r.Quarto);
+            var listaRsvs = _context.Reservas
+                .Include(r => r.Quarto)
+                .Include(r => r.Hospede); // Incluir o Hospede na consulta
             return View(await listaRsvs.ToListAsync());
         }
 

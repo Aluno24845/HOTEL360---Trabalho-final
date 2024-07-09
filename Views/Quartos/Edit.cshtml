@@ -4,72 +4,77 @@
     ViewData["Title"] = "Editar Quarto";
 }
 
-<h1>Editar Quarto</h1>
+<br />
+<h1 style="color: #fff;">Editar Quarto</h1>
 
-<h4>Quarto</h4>
-<hr />
+
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit"
-            method="post"
-            enctype="multipart/form-data">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="row no-gutters">
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <form asp-action="Edit"
+                              method="post"
+                              enctype="multipart/form-data">
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="Imagem" /> <!-- Campo oculto para manter o nome da imagem -->
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Capacidade" class="control-label"></label>
-                <input asp-for="Capacidade" class="form-control" />
-                <span asp-validation-for="Capacidade" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                @*
-                Vamos usar a variável auxiliar para ler os dados
-                do PRECO para evitar os constrangimentos do
-                processamento de vars. do tipo DECIMAL
-                *@
-                <label asp-for="PrecoAux" class="control-label"></label>
-                <input asp-for="PrecoAux" class="form-control" />
-                <span asp-validation-for="PrecoAux" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descricao" class="control-label"></label>
-                <input asp-for="Descricao" class="form-control" />
-                <span asp-validation-for="Descricao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Localizacao" class="control-label"></label>
-                <input asp-for="Localizacao" class="form-control" />
-                <span asp-validation-for="Localizacao" class="text-danger"></span>
-            </div>            
-            <div class="form-group">
-                <label asp-for="Imagem" class="control-label"></label>
-                @* Exibe a imagem atual do Avatar *@
-                @if (!string.IsNullOrEmpty(Model.Imagem))
-                {
-                    <div>
-                        <img src="~/Imagens/@Model.Imagem" alt="Imagem" style="max-width: 150px; max-height: 150px;" />
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="Id" />
+                            <input type="hidden" asp-for="Imagem" /> <!-- Campo oculto para manter o nome da imagem -->
+                            <div class="form-group">
+                                <label asp-for="Nome" class="control-label"></label>
+                                <input asp-for="Nome" class="form-control" />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Capacidade" class="control-label"></label>
+                                <input asp-for="Capacidade" class="form-control" />
+                                <span asp-validation-for="Capacidade" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                @*
+                                Vamos usar a variável auxiliar para ler os dados
+                                do PRECO para evitar os constrangimentos do
+                                processamento de vars. do tipo DECIMAL
+                                *@
+                                <label asp-for="PrecoAux" class="control-label"></label>
+                                <input asp-for="PrecoAux" class="form-control" />
+                                <span asp-validation-for="PrecoAux" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Descricao" class="control-label"></label>
+                                <input asp-for="Descricao" class="form-control" />
+                                <span asp-validation-for="Descricao" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Localizacao" class="control-label"></label>
+                                <input asp-for="Localizacao" class="form-control" />
+                                <span asp-validation-for="Localizacao" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Imagem" class="control-label"></label>
+                                @* Exibe a imagem atual do Avatar *@
+                                @if (!string.IsNullOrEmpty(Model.Imagem))
+                                {
+                                    <div>
+                                        <img src="~/Imagens/@Model.Imagem" alt="Imagem" style="max-width: 150px; max-height: 150px;" />
+                                    </div>
+                                }
+                                @* File Upload *@
+                                <input type="file" name="ImagemLogo" accept=".png,.jpg,.jpeg" class="form-control" />
+                                <span asp-validation-for="Imagem" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <br />
+                                <input type="submit" value="Guardar" class="btn btn-primary" />
+                                <a class="btn btn-secondary" asp-action="Index">Regressar à listagem de Quartos</a>
+                            </div>
+                        </form>                            
                     </div>
-                }
-                @* File Upload *@
-                <input type="file" name="ImagemLogo" accept=".png,.jpg,.jpeg" class="form-control" />
-                <span asp-validation-for="Imagem" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <br/>
-                <input type="submit" value="Guardar" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Regressar à listagem de Quartos</a>
 </div>
 
 @section Scripts {

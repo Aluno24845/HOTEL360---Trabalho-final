@@ -4,77 +4,81 @@
     ViewData["Title"] = "Adicionar Quarto";
 }
 
-<h1>Adicionar Quarto</h1>
+<br />
+<h1 style="color: #fff;">Adicionar Quarto</h1>
 
-<h4>Quarto</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        @* este objeto irá levar os conteúdos do formulário para o SERVIDOR
-        - o atributo 'method' define como os dados são enviados
-        - o atributo 'enctype' define que vamos enviar, também, ficheiros
-        *@
-        <form asp-action="Create"
-              method="post"
-              enctype="multipart/form-data">
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="row no-gutters">
+                <div class="col-md-12">
+                    <div class="card-body">
+                        @* este objeto irá levar os conteúdos do formulário para o SERVIDOR
+                        - o atributo 'method' define como os dados são enviados
+                        - o atributo 'enctype' define que vamos enviar, também, ficheiros
+                        *@
+                        <form asp-action="Create"
+                              method="post"
+                              enctype="multipart/form-data">
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Capacidade" class="control-label"></label>
-                <input asp-for="Capacidade" class="form-control" />
-                <span asp-validation-for="Capacidade" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                @*
-                Vamos usar a variável auxiliar para ler os dados
-                do PRECO para evitar os constrangimentos do
-                processamento de vars. do tipo DECIMAL
-                *@
-                <label asp-for="PrecoAux" class="control-label"></label>
-                <input asp-for="PrecoAux" class="form-control" />
-                <span asp-validation-for="PrecoAux" class="text-danger"></span>
-            </div>
+                            <div class="form-group">
+                                <label asp-for="Nome" class="control-label"></label>
+                                <input asp-for="Nome" class="form-control" />
+                                <span asp-validation-for="Nome" class="text-danger"></span>
+                            </div>
 
-            <div class="form-group">
-                <label asp-for="Descricao" class="control-label"></label>
-                <input asp-for="Descricao" class="form-control" />
-                <span asp-validation-for="Descricao" class="text-danger"></span>
-            </div>
+                            <div class="form-group">
+                                <label asp-for="Capacidade" class="control-label"></label>
+                                <input asp-for="Capacidade" class="form-control" />
+                                <span asp-validation-for="Capacidade" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                @*
+                                Vamos usar a variável auxiliar para ler os dados
+                                do PRECO para evitar os constrangimentos do
+                                processamento de vars. do tipo DECIMAL
+                                *@
+                                <label asp-for="PrecoAux" class="control-label"></label>
+                                <input asp-for="PrecoAux" class="form-control" />
+                                <span asp-validation-for="PrecoAux" class="text-danger"></span>
+                            </div>
 
-            <div class="form-group">
-                <label asp-for="Imagem" class="control-label"></label>
-                @* File Upload
-                - não esquecer definir:
-                - 'accept'' para ajudar os utilizadores a escolher o tipo certo de ficheiro
-                - 'name' para acederem ao ficheiro no Servidor
-                *@
-                <input type="file" name="ImagemLogo" accept=".png,.jpg,.jpeg" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="Localizacao" class="control-label"></label>
-                <input asp-for="Localizacao" class="form-control" />
-                <span asp-validation-for="Localizacao" class="text-danger"></span>
-            </div>
+                            <div class="form-group">
+                                <label asp-for="Descricao" class="control-label"></label>
+                                <input asp-for="Descricao" class="form-control" />
+                                <span asp-validation-for="Descricao" class="text-danger"></span>
+                            </div>
 
-            <br/>
+                            <div class="form-group">
+                                <label asp-for="Imagem" class="control-label"></label>
+                                @* File Upload
+                                - não esquecer definir:
+                                - 'accept'' para ajudar os utilizadores a escolher o tipo certo de ficheiro
+                                - 'name' para acederem ao ficheiro no Servidor
+                                *@
+                                <input type="file" name="ImagemLogo" accept=".png,.jpg,.jpeg" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Localizacao" class="control-label"></label>
+                                <input asp-for="Localizacao" class="form-control" />
+                                <span asp-validation-for="Localizacao" class="text-danger"></span>
+                            </div>
 
-            <div class="form-group">
-                <input type="submit" value="Adicionar" class="btn btn-primary" />
+                            <div class="mt-3">
+                                <br />
+                                <input type="submit" value="Adicionar" class="btn btn-primary" />
+                                <a class="btn btn-secondary" asp-action="Index">Regressar à listagem de Quartos</a>
+                            </div>
+                        </form>                                 
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Regressar à listagem dos Quartos</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

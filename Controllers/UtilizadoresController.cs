@@ -126,6 +126,12 @@ namespace HOTEL360___Trabalho_final.Controllers{
         *                    é que o ficheiro é guardado no 
         *                    disco rígido
         */
+            //Validação do tipo
+            if (criarutilizador.Tipo == "-1")
+            {
+                ModelState.AddModelError("", "Escolha um tipo de utilizador, por favor.");
+                return View(criarutilizador);
+            }
 
             // vars. auxiliares
             string nomeImagem = "";

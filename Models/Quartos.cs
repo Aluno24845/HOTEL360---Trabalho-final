@@ -24,12 +24,14 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Nome do Quarto 
         /// </summary>
-        [StringLength(100)]
+        [StringLength(50)]
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
         public string Nome { get; set; }
 
         /// <summary>
         /// Capacidade do Quarto
-        /// </summary>
+        /// </summary>«
+        [Required(ErrorMessage = "A {0} do querto é de preenchimento obrigatório")]
         public int Capacidade { get; set; }
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace HOTEL360___Trabalho_final.Models{
         [NotMapped] // não representa este atributo na BD
         [StringLength(8)]
         [Display(Name = "Preço")]
-        [Required(ErrorMessage = "O {0} é obrigatória.")]
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
         [RegularExpression("[0-9]+[.,]?[0-9]{0,2}",
            ErrorMessage = "só aceita digitos numéricos, separados por . ou por ,")]
         public string PrecoAux { get; set; }

@@ -4,72 +4,77 @@
     ViewData["Title"] = "Reservas";
 }
 
-<h1>Lista de Reservas</h1>
+<br />
+<h1 style="color: #ffffff;">Lista de Reservas</h1>
 
-<p>
-    <a asp-action="Create">Nova Reserva</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ValorPago)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataReserva)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataCheckIN)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataCheckOUT)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quarto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ValorTotal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ValorAPagar)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ValorPago)€
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DataReserva)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DataCheckIN)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DataCheckOUT)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Quarto.Nome)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ValorTotal)€
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ValorAPagar)€
-                </td>
-                <td>
-                    @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")) {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> 
-                    }|
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                    @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas")) {
-                        <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+<h4>
+    <button class="btn-create" onclick="window.location.href='@Url.Action("Create")'">Nova Reserva</button>
+</h4>
+<br />
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+                    {
+                        <h1 class="card-title">Reserva de: @Html.DisplayFor(model => item.Hospede.Nome)</h1>
+                        <hr />
+                        <p class="card-text"><strong>@Html.DisplayNameFor(model => model.DataReserva): </strong>@Html.DisplayFor(modelItem => item.DataReserva)</p>
+                    } else
+                    {
+                        <h1 class="card-title">Data da reserva: @Html.DisplayFor(modelItem => item.DataReserva)</h1>
+                        <br />
+                    }                    
+                    <p class="card-text"><strong>@Html.DisplayNameFor(model => model.DataCheckIN): </strong>@Html.DisplayFor(modelItem => item.DataCheckIN)</p>
+                    <p class="card-text"><strong>@Html.DisplayNameFor(model => model.DataCheckOUT): </strong>@Html.DisplayFor(modelItem => item.DataCheckOUT)</p>
+                    <p class="card-text"><strong>@Html.DisplayNameFor(model => model.Quarto): </strong>@Html.DisplayFor(modelItem => item.Quarto.Nome)</p>
+                    <p class="card-text"><strong>@Html.DisplayNameFor(model => model.ValorTotal): </strong>@Html.DisplayFor(modelItem => item.ValorTotal)€</p>
+                    <p class="card-text"><strong>@Html.DisplayNameFor(model => model.ValorPago): </strong>@Html.DisplayFor(modelItem => item.ValorPago)€</p>
+                    <p class="card-text valor-a-pagar"><strong>@Html.DisplayNameFor(model => model.ValorAPagar): </strong>@Html.DisplayFor(modelItem => item.ValorAPagar)€</p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <p>
+                            @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+                            {
+                                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                            }
+
+                            <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
+                            @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+                            {
+                                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+                            }
+                        </p>
                     }
-                </td>
-            </tr>
+                </div>
+            </div>
+        </div>
     }
-    </tbody>
-</table>
+</div>
+
+<style>
+    /* Estilos para o botão */
+    .btn-create {
+        background-color: #e78d3c; /* Cor de fundo laranja, pode ser ajustada conforme necessário */
+        color: #fff; /* Cor do texto branco */
+        border: none; /* Remove a borda padrão */
+        padding: 10px 20px; /* Espaçamento interno */
+        font-size: 18px; /* Tamanho da fonte */
+        cursor: pointer; /* Mostra um cursor ao passar o mouse */
+        border-radius: 5px; /* Borda arredondada */
+        transition: background-color 0.3s ease; /* Efeito de transição suave */
+    }
+
+        /* Hover (quando o mouse passa por cima) */
+        .btn-create:hover {
+            background-color: #e06f09; /* Cor de fundo mais escura ao passar o mouse */
+        }
+
+        .valor-a-pagar{
+            color: red; /* Cor do texto vermelho */
+        }
+
+</style>

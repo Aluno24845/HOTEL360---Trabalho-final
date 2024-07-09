@@ -8,38 +8,38 @@
 <h1 style="color: #fff;">Apagar Utilizador</h1>
 <h3 style="color: #fff;">Tem a certeza que pretende eliminar este utilizador?</h3>
 
-<div class="row">
+<div class="row mb-4">
     <div class="col-md-6">
         <div class="card">
             <div class="row no-gutters">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="card-body">
                         <dl class="row">
-                            <dt class="col-sm-8">
+                            <dt class="col-sm-4">
                                 @Html.DisplayNameFor(model => model.Nome)
                             </dt>
-                            <dd class="col-sm-4">
+                            <dd class="col-sm-8">
                                 @Html.DisplayFor(model => model.Nome)
                             </dd>
-                            <dt class="col-sm-8">
+                            <dt class="col-sm-4">
                                 @Html.DisplayNameFor(model => model.Telemovel)
                             </dt>
-                            <dd class="col-sm-4">
+                            <dd class="col-sm-8">
                                 @Html.DisplayFor(model => model.Telemovel)
                             </dd>
-                            <dt class="col-sm-8">
+                            <dt class="col-sm-4">
                                 @Html.DisplayNameFor(model => model.Avatar)
                             </dt>
-                            <dd class="col-sm-4">
+                            <dd class="col-sm-8">
                                 <img src="~/Imagens/@Html.DisplayFor(model => model.Avatar)"
                                      alt="avatar do utilizador @Html.DisplayFor(model => model.Nome)"
                                      title="@Html.DisplayFor(model => model.Nome)"
                                      width="100px" />
                             </dd>
-                            <dt class="col-sm-8">
+                            <dt class="col-sm-4">
                                 @Html.DisplayNameFor(model => model.DataNascimento)
                             </dt>
-                            <dd class="col-sm-4">
+                            <dd class="col-sm-8">
                                 @Html.DisplayFor(model => model.DataNascimento)
                             </dd>
                         </dl>

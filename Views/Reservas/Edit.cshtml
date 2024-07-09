@@ -4,85 +4,91 @@
     ViewData["Title"] = "Editar Reserva";
 }
 
-<h1>Editar Reserva</h1>
+<br />
+<h1 style="color: #fff;">Editar Reserva</h1>
 
-<h4>Reserva</h4>
-<hr />
+
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" id="DataCheckINHidden" name="DataCheckINHidden" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
-            <input type="hidden" id="DataCheckOUTHidden" name="DataCheckOUTHidden" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="row no-gutters">
+                <div class="col-md-12">
+                    <div class="card-body">
+                        <form asp-action="Edit">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="Id" />
+                            <input type="hidden" id="DataCheckINHidden" name="DataCheckINHidden" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
+                            <input type="hidden" id="DataCheckOUTHidden" name="DataCheckOUTHidden" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")">
 
-            <div class="form-group">
-                <label asp-for="DataReserva" class="control-label"></label>
-                <span class="form-control">@Model.DataReserva.ToString("dd/MM/yyyy")</span>
-            </div> 
+                            <div class="form-group">
+                                <label asp-for="DataReserva" class="control-label"></label>
+                                <span class="form-control">@Model.DataReserva.ToString("dd/MM/yyyy")</span>
+                            </div>
 
-            <div class="form-group">
-                <label asp-for="ValorPagoAux" class="control-label"></label>
-                <input asp-for="ValorPagoAux" class="form-control" />
-                <span asp-validation-for="ValorPagoAux" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataCheckIN" class="control-label"></label>
-                <input asp-for="DataCheckIN" id="dataCheckIN" class="form-control" type="datetime-local" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
-                <span asp-validation-for="DataCheckIN" class="text-danger"></span>
+                            <div class="form-group">
+                                <label asp-for="ValorPagoAux" class="control-label"></label>
+                                <input asp-for="ValorPagoAux" class="form-control" />
+                                <span asp-validation-for="ValorPagoAux" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DataCheckIN" class="control-label"></label>
+                                <input asp-for="DataCheckIN" id="dataCheckIN" class="form-control" type="datetime-local" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="DataCheckIN" class="text-danger"></span>
 
-            </div>
-            <div class="form-group">
-                <label asp-for="DataCheckOUT" class="control-label"></label>
-                <input asp-for="DataCheckOUT" id="dataCheckOUT" class="form-control" type="datetime-local" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")" />
-                <span asp-validation-for="DataCheckOUT" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quarto" class="control-label"></label>
-                <select asp-for="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK">
-                    <option value="-1">-- Escolha um quarto --</option>
-                </select>
-            </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DataCheckOUT" class="control-label"></label>
+                                <input asp-for="DataCheckOUT" id="dataCheckOUT" class="form-control" type="datetime-local" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="DataCheckOUT" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Quarto" class="control-label"></label>
+                                <select asp-for="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK">
+                                    <option value="-1">-- Escolha um quarto --</option>
+                                </select>
+                            </div>
 
-            @* listar os serviços *@
-            <div class="form-group">
-                <label class="control-label">Serviços</label>
-                @foreach (var serv in (List<Servicos>)ViewData["listaServicos"] ?? Enumerable.Empty<Servicos>())
-                {
-                    <div class="form-check">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               value="@serv.Id"
-                               name="escolhaServicos"
-                        @(((List<int>)ViewData["servicosSelecionados"]).Contains(serv.Id) ? "checked" : "")>
-                        <label class="form-check-label" for="flexCheckDefault">
-                            @serv.Nome
-                        </label>
+                            @* listar os serviços *@
+                            <div class="form-group">
+                                <label class="control-label">Serviços</label>
+                                @foreach (var serv in (List<Servicos>)ViewData["listaServicos"] ?? Enumerable.Empty<Servicos>())
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value="@serv.Id"
+                                               name="escolhaServicos"
+                                        @(((List<int>)ViewData["servicosSelecionados"]).Contains(serv.Id) ? "checked" : "")>
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            @serv.Nome
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+
+                            @* Caso seja um Gerente ou um Reccecionista escolhe o Hospede para associar à reserva*@
+                            @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+                            {
+                                <div class="form-group">
+                                    <label asp-for="Hospede" class="control-label"></label>
+                                    <select asp-for="HospedeId" class="form-control" asp-items="ViewBag.HospedeId">
+                                        <option value="-1">-- Escolha um hospede --</option>
+                                    </select>
+                                </div>
+                            }
+                            <div class="form-group">
+                                <br />
+                                <input type="submit" value="Guardar" class="btn btn-primary" />
+                                <a class="btn btn-secondary" asp-action="Index">Regressar à listagem de Reservas</a>
+                            </div>
+                        </form>
                     </div>
-                }
-            </div>            
-
-            @* Caso seja um Gerente ou um Reccecionista escolhe o Hospede para associar à reserva*@
-            @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
-            {
-                <div class="form-group">
-                    <label asp-for="Hospede" class="control-label"></label>
-                    <select asp-for="HospedeId" class="form-control" asp-items="ViewBag.HospedeId">
-                        <option value="-1">-- Escolha um hospede --</option>
-                    </select>
                 </div>
-            }
-            <div class="form-group">
-                <br />
-                <input type="submit" value="Guardar" class="btn btn-primary" />
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Regressar à listagem de Reservas</a>
-</div>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")

@@ -17,7 +17,6 @@ namespace HOTEL360___Trabalho_final.Models
         /// Numero do Reccecionista
         /// </summary>
         [Display(Name = "Número do Reccecionista")]
-        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório.")]
         public int NumReccecionista { get; set; }
 
         /* ************************************************
