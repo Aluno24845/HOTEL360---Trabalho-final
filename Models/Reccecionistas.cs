@@ -13,12 +13,6 @@ namespace HOTEL360___Trabalho_final.Models
             ListaReservas = new HashSet<Reservas>();
         }
 
-        /// <summary>
-        /// Numero do Reccecionista
-        /// </summary>
-        [Display(Name = "Número do Reccecionista")]
-        public int NumReccecionista { get; set; }
-
         /* ************************************************
         * Vamos criar as Relações (FKs) com outras tabelas
         * *********************************************** */

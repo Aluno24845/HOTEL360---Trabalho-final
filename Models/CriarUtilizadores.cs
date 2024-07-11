@@ -80,11 +80,6 @@ namespace HOTEL360___Trabalho_final.Models{
             ErrorMessage = "O {0}  deve começar com 1,2,3,5,6,7,9 e só aceita 9 digitos")]
         public string NIF { get; set; }
 
-        /// <summary>
-        /// Numero do Reccecionista
-        /// </summary>
-        [Display(Name = "Número do Reccecionista")]
-        public int NumReccecionista { get; set; }
-
+        
     }
 }

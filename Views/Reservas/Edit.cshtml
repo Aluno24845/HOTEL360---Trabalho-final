@@ -25,11 +25,7 @@
                                 <span class="form-control">@Model.DataReserva.ToString("dd/MM/yyyy")</span>
                             </div>
 
-                            <div class="form-group">
-                                <label asp-for="ValorPagoAux" class="control-label"></label>
-                                <input asp-for="ValorPagoAux" class="form-control" />
-                                <span asp-validation-for="ValorPagoAux" class="text-danger"></span>
-                            </div>
+
                             <div class="form-group">
                                 <label asp-for="DataCheckIN" class="control-label"></label>
                                 <input asp-for="DataCheckIN" id="dataCheckIN" class="form-control" type="datetime-local" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
@@ -43,7 +39,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="Quarto" class="control-label"></label>
-                                <select asp-for="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK">
+                                <select asp-for="QuartoFK" id="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK">
                                     <option value="-1">-- Escolha um quarto --</option>
                                 </select>
                             </div>
@@ -54,8 +50,9 @@
                                 @foreach (var serv in (List<Servicos>)ViewData["listaServicos"] ?? Enumerable.Empty<Servicos>())
                                 {
                                     <div class="form-check">
-                                        <input class="form-check-input"
+                                        <input class="form-check-input servicos-selecionados"
                                                type="checkbox"
+                                               data-preco="@serv.Preco"
                                                value="@serv.Id"
                                                name="escolhaServicos"
                                         @(((List<int>)ViewData["servicosSelecionados"]).Contains(serv.Id) ? "checked" : "")>
@@ -65,17 +62,25 @@
                                     </div>
                                 }
                             </div>
-
                             @* Caso seja um Gerente ou um Reccecionista escolhe o Hospede para associar à reserva*@
                             @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
                             {
-                                <div class="form-group">
-                                    <label asp-for="Hospede" class="control-label"></label>
-                                    <select asp-for="HospedeId" class="form-control" asp-items="ViewBag.HospedeId">
-                                        <option value="-1">-- Escolha um hospede --</option>
-                                    </select>
-                                </div>
+                            <div class="form-group">
+                                <label asp-for="Hospede" class="control-label"></label>
+                                <span class="form-control">@Model.Hospede.Nome<span>
+                            </div>
                             }
+                            <div class="form-group">
+                                <label asp-for="ValorPagoAux" class="control-label"></label>
+                                <input asp-for="ValorPagoAux" class="form-control" />
+                                <span asp-validation-for="ValorPagoAux" class="text-danger"></span>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label >Valor Total </label>
+                                <span id="valorTotal"></span>
+                            </div>
+                      
                             <div class="form-group">
                                 <br />
                                 <input type="submit" value="Guardar" class="btn btn-primary" />
@@ -93,6 +98,43 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
+        var listaTodosOsQuartos = @Html.Raw(Json.Serialize(@ViewBag.Quartos));
+        var numeroDeDias = 0;
+        var precoQuarto = parseFloat("@Model.Quarto.Preco");
+        var valorTotal = 0;
+
+
+        function contarDiasEntreDuasDatas(date1, date2) {
+            const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
+            const firstDate = new Date(date1);
+            const secondDate = new Date(date2);
+
+            // Calculate the difference in days
+            const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+
+            return diffDays;
+        }
+
+        function calculaPrecoDaEstadia(dataInicio, dataFim) {
+            const listaServicosSelectionados = document.querySelectorAll('.servicos-selecionados')
+            numeroDeDias = contarDiasEntreDuasDatas(dataInicio.value, dataFim.value)
+ 
+
+            var totalServicoPorNoite = 0;
+            listaServicosSelectionados.forEach(function (servico) {
+                if (servico.checked) {
+                    totalServicoPorNoite += parseFloat(servico.getAttribute('data-preco'));
+                }
+            });
+
+            var totalServicoTodasNoites = numeroDeDias * totalServicoPorNoite;
+            valorTotal = numeroDeDias * precoQuarto + totalServicoTodasNoites
+
+            const valorTotalElement = document.getElementById("valorTotal");
+            valorTotalElement.innerText = valorTotal.toFixed(2);
+
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             const dataCheckIN = document.getElementById("dataCheckIN");
             const dataCheckOUT = document.getElementById("dataCheckOUT");
@@ -101,6 +143,22 @@
             const dataAtual = new Date();
             const dataCheckINDate = new Date(DataCheckINHidden);
             const dataCheckOUTDate = new Date(DataCheckOUTHidden);
+            const listaServicosSelectionados = document.querySelectorAll('.servicos-selecionados')
+            const quartoSelecionado = document.getElementById("QuartoFK");
+            calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+
+            quartoSelecionado.addEventListener('change', function () {
+                console.log(quartoSelecionado.value)
+                precoQuarto = parseFloat(listaTodosOsQuartos.find(x => x.id == quartoSelecionado.value).preco);
+                calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+            })
+
+
+            listaServicosSelectionados.forEach(function(elemento){ 
+                elemento.addEventListener('change', function () {
+                    calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+                })
+            })
 
             // Verifica se a data de Check-In já passou da data atual
             if (dataCheckINDate < dataAtual) {
@@ -145,9 +203,13 @@
                 checkInDate.setHours(5, 0, 0, 0); // Define a hora para 5h da manhã do dia seguinte
                 const minCheckOutDate = checkInDate.toISOString().slice(0, 16); // Formata a data para datetime-local
                 dataCheckOUT.min = minCheckOutDate;
+
+                 calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+
             });
 
             dataCheckOUT.addEventListener("change", function () {
+
                 const checkOutDate = new Date(dataCheckOUT.value);
 
                 // Restrição de horário para check-out entre 5h e 17h
@@ -156,6 +218,8 @@
                     dataCheckOUT.value = ''; // Limpa o valor se estiver fora do horário permitido
                     return;
                 }
+
+                calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
             });
         });
     </script>

@@ -90,6 +90,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             // em SQL: SELECT * FROM Servicos s ORDER BY s.Nome
             // em LINQ:
             var listaSer = _context.Servicos.OrderBy(p => p.Nome).ToList();
+       
             ViewData["listaServicos"] = listaSer;
 
             /*
@@ -333,6 +334,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             // Recuperar a reserva existente, incluindo os serviços associados
             var reserva = await _context.Reservas
                 .Include(r => r.ListaServicos)
+                .Include(r=>r.Hospede) // Incluir o Hospede na consulta
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (reserva == null)
@@ -361,21 +363,9 @@ namespace HOTEL360___Trabalho_final.Controllers
             ViewData["servicosSelecionados"] = reserva.ListaServicos.Select(s => s.Id).ToList();
 
 
-            /*
-             * Aceder à lista de Hospedes se a pessoa que interage
-             * é do Role GERENTES ou RECCECIONISTAS
-             */
-            if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
-            {
-                // efetuar uma pesquisa na BD pelos Hospedes
-                // que podem estar associados à FK Hospedes
-                // SelectList -> cria uma lista de 'options' para a dropdown
-                // Expressão LINQ para efetuar a pesquisa dos Quartos
-                //    _context.Hosdes.OrderBy(c=>c.Nome)
-                //ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome");
-                ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(h => h.Nome), "Id", "Nome", reserva.HospedeId);
+            // TODO - melhorar informacao enviada - enviar apenas, preco, id, none
+            ViewData["Quartos"] = _context.Quartos.OrderBy(q => q.Nome).ToArray();
 
-            }
             return View(reserva);
         }
 
@@ -392,6 +382,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             }
             var reservaGuardada = await _context.Reservas
                 .Include(r => r.ListaServicos)
+                .Include(r=> r.Hospede)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             //var reservaGuardada = await _context.Reservas.FindAsync(id);
@@ -400,7 +391,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             {
                 return NotFound();
             }
-
+            reserva.HospedeId = reservaGuardada.HospedeId;
             // Se a DataCheckIN e DataCheckOUT não chegaram como "01/01/0001 00:00:00"
             if (reserva.DataCheckIN != DateTime.MinValue && reserva.DataCheckOUT != DateTime.MinValue)   {
                 reservaGuardada.ValorPago = reserva.ValorPago;
@@ -408,14 +399,14 @@ namespace HOTEL360___Trabalho_final.Controllers
                 reservaGuardada.DataCheckIN = reserva.DataCheckIN;
                 reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
                 reservaGuardada.QuartoFK = reserva.QuartoFK;
-                reservaGuardada.HospedeId = reserva.HospedeId;
+           
             }
             if (reserva.DataCheckIN == DateTime.MinValue && reserva.DataCheckOUT != DateTime.MinValue) {
                 reservaGuardada.ValorPago = reserva.ValorPago;
                 reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
                 reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
                 reservaGuardada.QuartoFK = reserva.QuartoFK;
-                reservaGuardada.HospedeId = reserva.HospedeId;                
+                        
             }
             if (reserva.DataCheckIN != DateTime.MinValue && reserva.DataCheckOUT == DateTime.MinValue)
             {
@@ -423,12 +414,12 @@ namespace HOTEL360___Trabalho_final.Controllers
                 reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
                 reservaGuardada.DataCheckIN = reserva.DataCheckIN;
                 reservaGuardada.QuartoFK = reserva.QuartoFK;
-                reservaGuardada.HospedeId = reserva.HospedeId;
+
             }
             reservaGuardada.ValorPago = reserva.ValorPago;
             reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
             reservaGuardada.QuartoFK = reserva.QuartoFK;
-            reservaGuardada.HospedeId = reserva.HospedeId;
+
 
             if (ModelState.IsValid)
             {
@@ -445,10 +436,6 @@ namespace HOTEL360___Trabalho_final.Controllers
                         var listaServicos = _context.Servicos.OrderBy(p => p.Nome).ToList();
                         ViewData["listaServicos"] = listaServicos;
 
-                        if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
-                        {
-                            ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome", reservaGuardada.HospedeId);
-                        }
 
                         return View(reservaGuardada);
                     }
@@ -464,11 +451,6 @@ namespace HOTEL360___Trabalho_final.Controllers
                         ViewData["listaServicos"] = listaServicos;
                         ViewData["servicosSelecionados"] = reservaGuardada.ListaServicos.Select(s => s.Id).ToList();
 
-                        if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
-                        {
-                            ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome", reservaGuardada.HospedeId);
-                        }
-
                         return View(reservaGuardada);
                     }
 
@@ -482,11 +464,6 @@ namespace HOTEL360___Trabalho_final.Controllers
                         var listaServicos = _context.Servicos.OrderBy(p => p.Nome).ToList();
                         ViewData["listaServicos"] = listaServicos;
                         ViewData["servicosSelecionados"] = reservaGuardada.ListaServicos.Select(s => s.Id).ToList();
-
-                        if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
-                        {
-                            ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome", reservaGuardada.HospedeId);
-                        }
 
                         return View(reservaGuardada);
                     }
@@ -546,11 +523,6 @@ namespace HOTEL360___Trabalho_final.Controllers
                         var listaServicos = _context.Servicos.OrderBy(p => p.Nome).ToList();
                         ViewData["listaServicos"] = listaServicos;
                         ViewData["servicosSelecionados"] = reservaGuardada.ListaServicos.Select(s => s.Id).ToList();
-
-                        if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
-                        {
-                            ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome", reservaGuardada.HospedeId);
-                        }
 
                         return View(reservaGuardada);
                     }

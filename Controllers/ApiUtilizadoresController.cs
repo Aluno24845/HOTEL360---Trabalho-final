@@ -189,7 +189,6 @@ namespace HOTEL360___Trabalho_final.Controllers
                     utilizador.Telemovel = criarutilizador.Telemovel;
                     utilizador.DataNascimento = criarutilizador.DataNascimento;
                     utilizador.Avatar = criarutilizador.Avatar;
-                    utilizador.NumReccecionista = criarutilizador.NumReccecionista;
                     utilizador.UserId = applicationUser.Id;
 
                     _context.Add(utilizador);
