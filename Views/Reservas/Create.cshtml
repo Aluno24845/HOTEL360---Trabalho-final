@@ -16,18 +16,8 @@
             <div class="row no-gutters">
                 <div class="col-md-12">
                     <div class="card-body">
-                        <form asp-action="Create">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <div class="form-group">
-                                @*
-                                Vamos usar a variável auxiliar para ler os dados
-                                do VALORPAGO para evitar os constrangimentos do
-                                processamento de vars. do tipo DECIMAL
-                                *@
-                                <label asp-for="ValorPagoAux" class="control-label"></label>
-                                <input asp-for="ValorPagoAux" class="form-control" />
-                                <span asp-validation-for="ValorPagoAux" class="text-danger"></span>
-                            </div>
+                        <form asp-action="Create" id="reservaForm">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>                            
                             <div class="form-group">
                                 <label asp-for="DataCheckIN" class="control-label"></label>
                                 <input asp-for="DataCheckIN" id="dataCheckIN" class="form-control" type="datetime-local" />
@@ -40,7 +30,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="Quarto" class="control-label"></label>
-                                <select asp-for="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK">
+                                <select asp-for="QuartoFK" id="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK" disabled>
                                     <option value="-1">-- Escolha um quarto --</option>
                                 </select>
                             </div>
@@ -51,8 +41,9 @@
                                 @foreach (var serv in (List<Servicos>)ViewData["listaServicos"] ?? Enumerable.Empty<Servicos>())
                                 {
                                     <div class="form-check">
-                                        <input class="form-check-input"
+                                        <input class="form-check-input servicos-selecionados"
                                                type="checkbox"
+                                               data-preco="@serv.Preco"
                                                value="@serv.Id"
                                                name="escolhaServicos">
                                         <label class="form-check-label" for="flexCheckDefault">
@@ -72,6 +63,21 @@
                                     </select>
                                 </div>
                             }
+                            <div class="form-group">
+                                @*
+                                Vamos usar a variável auxiliar para ler os dados
+                                do VALORPAGO para evitar os constrangimentos do
+                                processamento de vars. do tipo DECIMAL
+                                *@
+                                <label asp-for="ValorPagoAux" class="control-label"></label>
+                                <input asp-for="ValorPagoAux" class="form-control" />
+                                <span asp-validation-for="ValorPagoAux" class="text-danger"></span>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label >Valor Total </label>
+                                <span id="valorTotal"></span>
+                            </div>
                             <div class="mt-3">
                                 <br />
                                 <input type="submit" value="Adicionar" class="btn btn-primary" />
@@ -90,10 +96,132 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const dataCheckIN = document.getElementById("dataCheckIN");
-            const dataCheckOUT = document.getElementById("dataCheckOUT");
+        var listaTodosOsQuartos = @Html.Raw(Json.Serialize(@ViewBag.Quartos));
 
+        var numeroDeDias = 0;
+        var valorTotal = 0;
+
+
+        // Função para contar os dias entre duas datas
+        function contarDiasEntreDuasDatas(date1, date2) {
+            const oneDay = 24 * 60 * 60 * 1000; // Um dia em milisegundos
+            const firstDate = new Date(date1);
+            const secondDate = new Date(date2);
+
+            // Calcula a diferença em dias
+            const diferencadias = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+
+            return diferencadias;
+        }
+
+        // Função para calcular o preço TOTAL da estadia
+        function calculaPrecoDaEstadia(dataInicio, dataFim) {
+            const listaServicosSelectionados = document.querySelectorAll('.servicos-selecionados')
+            numeroDeDias = contarDiasEntreDuasDatas(dataInicio.value, dataFim.value)
+
+
+            var totalServicoPorNoite = 0;
+
+            // Calcula o preço total dos serviços selecionados
+            listaServicosSelectionados.forEach(function (servico) {
+                if (servico.checked) {
+                    totalServicoPorNoite += parseFloat(servico.getAttribute('data-preco'));
+                }
+            });
+
+            // Calcula o preço total da estadia
+            var totalServicoTodasNoites = numeroDeDias * totalServicoPorNoite;
+            valorTotal = numeroDeDias * precoQuarto + totalServicoTodasNoites;
+
+            // Atualiza o valor total exibido na página
+            const valorTotalElement = document.getElementById("valorTotal");
+            //valorTotalElement.innerText = valorTotal.toFixed(2) + " €";
+            valorTotalElement.innerText = valorTotal.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Define o valor mínimo do check-in como a hora atual
+            const dataCheckIN = document.getElementById("dataCheckIN");
+            const now = new Date();
+            const minCheckInDate = now.toISOString().slice(0, 16); // Formata a data para datetime-local
+            dataCheckIN.min = minCheckInDate;
+
+            // Obter os elementos do DOM
+            const dataCheckOUT = document.getElementById("dataCheckOUT"); 
+
+            const quartoDropdown = document.getElementById("QuartoFK");
+            const listaServicosSelectionados = document.querySelectorAll('.servicos-selecionados');
+            
+            // Ativa a dropdown caso haja dataCheckIN e dataCheckOUT
+            function activarQuartoDropdown() {
+                // Se não houver data de check-in ou check-out, desativa a dropdown
+                if (!dataCheckIN.value || !dataCheckOUT.value) {
+                    quartoDropdown.disabled = true
+                    return
+                }
+                else
+                    quartoDropdown.disabled = false
+
+                const quartosDisponiveis = [];
+
+                const checkInDate = new Date(dataCheckIN.value);
+                const checkOutDate = new Date(dataCheckOUT.value);
+
+                // Verifica se o quarto está ocupado
+                for (const quarto of listaTodosOsQuartos) {
+                    const quartoOcupado = quarto.reservas.some(reserva => {
+                        const reservaCheckIn = new Date(reserva.dataCheckIN);
+                        const reservaCheckOut = new Date(reserva.dataCheckOUT);
+                        return (
+                            (checkInDate >= reservaCheckIn && checkInDate < reservaCheckOut) ||
+                            (checkOutDate > reservaCheckIn && checkOutDate <= reservaCheckOut) ||
+                            (checkInDate <= reservaCheckIn && checkOutDate >= reservaCheckOut)
+                        );
+                    });
+
+                    if (!quartoOcupado) {
+                        quartosDisponiveis.push(quarto);
+                    }
+                }
+                
+                console.log(quartosDisponiveis)
+
+                // Remove todas as opções da dropdown
+                var opcoesQuartos = document.querySelectorAll('#QuartoFK option');
+
+                opcoesQuartos.forEach(function (opcao) {
+                    if (opcao.value != "-1") {
+                        opcao.remove();
+                    }
+                });
+
+                // Adiciona os quartos disponíveis à dropdown
+                for (const quarto of quartosDisponiveis) {
+                    const option = document.createElement('option');
+                    option.value = quarto.id;
+                    option.text = quarto.nome;
+                    quartoDropdown.appendChild(option);
+                }
+
+                
+            }
+            // Adiciona o evento de mudança ao dropdown de quartos
+            quartoDropdown.addEventListener('change', function () {
+                precoQuarto = parseFloat(listaTodosOsQuartos.find(x => x.id == quartoDropdown.value).preco);
+                calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+
+            })
+
+            // Adiciona o evento de mudança a cada checkbox de serviço
+            listaServicosSelectionados.forEach(function (elemento) {
+                elemento.addEventListener('change', function () {
+                    calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+                })
+            })
+            
+            // Adiciona o evento de mudança ao campo de data de check-in
             dataCheckIN.addEventListener("change", function () {
                 const checkInDate = new Date(dataCheckIN.value);
 
@@ -108,8 +236,11 @@
                 checkInDate.setHours(5, 0, 0, 0); // Define a hora para 5h da manhã do dia seguinte
                 const minCheckOutDate = checkInDate.toISOString().slice(0, 16); // Formata a data para datetime-local
                 dataCheckOUT.min = minCheckOutDate;
+                activarQuartoDropdown();
+                calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
             });
 
+            // Adiciona o evento de mudança ao campo de data de check-out
             dataCheckOUT.addEventListener("change", function () {
                 const checkOutDate = new Date(dataCheckOUT.value);
 
@@ -118,6 +249,17 @@
                     alert("A hora de check-out deve estar entre 5h e 17h.");
                     dataCheckOUT.value = ''; // Limpa o valor se estiver fora do horário permitido
                     return;
+                }
+                activarQuartoDropdown();
+                calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+            });
+
+            // Adiciona o evento de envio ao formulário
+            document.getElementById("reservaForm").addEventListener("submit", function (event) {
+                const valorPago = parseFloat(document.getElementById("ValorPagoAux").value);
+                if (valorPago > valorTotal) {
+                    event.preventDefault(); // Impede o envio do formulário
+                    alert("O valor pago não pode ser superior ao valor total.");
                 }
             });
         });

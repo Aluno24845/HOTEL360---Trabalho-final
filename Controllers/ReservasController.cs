@@ -38,10 +38,25 @@ namespace HOTEL360___Trabalho_final.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            var listaRsvs = _context.Reservas
+
+
+            if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
+            {
+                return View(await _context.Reservas
                 .Include(r => r.Quarto)
-                .Include(r => r.Hospede); // Incluir o Hospede na consulta
-            return View(await listaRsvs.ToListAsync());
+                .Include(r => r.Hospede) // Incluir o Hospede na consulta
+                .ToListAsync());
+            }
+            else
+            {
+
+                return View(await _context.Reservas
+                    .Include(r => r.Quarto)
+                    .Include(r => r.Hospede) // Incluir o Hospede na consulta
+                    .Where(predicate: r => r.Hospede.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier)) // apenas as reservas do utilizador autenticado
+                    .ToListAsync());
+            }
+
         }
 
         // GET: Reservas/Details/5
@@ -90,7 +105,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             // em SQL: SELECT * FROM Servicos s ORDER BY s.Nome
             // em LINQ:
             var listaSer = _context.Servicos.OrderBy(p => p.Nome).ToList();
-       
+
             ViewData["listaServicos"] = listaSer;
 
             /*
@@ -107,8 +122,44 @@ namespace HOTEL360___Trabalho_final.Controllers
                 ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome");
 
             }
+                        
+            var lista = new List<object>();
 
+            // Obter a lista de quartos incluindo a lista de reservas
+            var listaQuartos = _context.Quartos
+                .OrderBy(q => q.Nome)
+                .Include(q => q.ListaReservas)
+                .ToList();
 
+            // Percorrer a lista de quartos
+            foreach (var quarto in listaQuartos)
+            {
+
+                var obj = new
+                {
+                    Id = quarto.Id,
+                    Nome = quarto.Nome,
+                    Preco = quarto.Preco,
+                    Reservas = new List<object>()
+                };
+
+                foreach (var reserva in quarto.ListaReservas)
+                {
+                    var objReserva = new
+                    {
+                        Id = reserva.Id,
+                        DataCheckIN = reserva.DataCheckIN,
+                        DataCheckOUT = reserva.DataCheckOUT
+                    };
+
+                    obj.Reservas.Add(objReserva);
+                }
+                lista.Add(obj);
+
+            }
+
+            // Enviar a lista de quartos para a View
+            ViewData["Quartos"] = lista;
 
 
             //devolve controlo à View
@@ -177,7 +228,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             {
 
                 try
-                {                    
+                {
 
                     // Verifica se a data de check-in é inferior à data da reserva
                     if (reserva.DataCheckIN < reserva.DataReserva)
@@ -257,7 +308,7 @@ namespace HOTEL360___Trabalho_final.Controllers
                     reserva.ValorTotal = CalcularValorTotal(reserva);
 
                     // Calcula o valor que ainda falta pagar
-                    reserva.ValorAPagar = reserva.ValorTotal - reserva.ValorPago;                                       
+                    reserva.ValorAPagar = reserva.ValorTotal - reserva.ValorPago;
 
                     //Verifica se o Valor Pago é superior ao Valor Total
                     if (reserva.ValorPago > reserva.ValorTotal){
@@ -276,7 +327,7 @@ namespace HOTEL360___Trabalho_final.Controllers
                         return View(reserva);
                     }
 
-                   
+
                     //adiciona os dados vindos da View à BD
                     _context.Add(reserva);
                     //efetua COMMIT na BD
@@ -334,7 +385,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             // Recuperar a reserva existente, incluindo os serviços associados
             var reserva = await _context.Reservas
                 .Include(r => r.ListaServicos)
-                .Include(r=>r.Hospede) // Incluir o Hospede na consulta
+                .Include(r => r.Hospede) // Incluir o Hospede na consulta
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (reserva == null)
@@ -343,7 +394,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             }
 
             // Preencher o valor de ValorPagoAux para exibição
-            reserva.ValorPagoAux = reserva.ValorPago.ToString();            
+            reserva.ValorPagoAux = reserva.ValorPago.ToString();
 
             // efetuar uma pesquisa na BD pelos Quartos
             // que podem estar associados à FK Quartos
@@ -364,8 +415,41 @@ namespace HOTEL360___Trabalho_final.Controllers
 
 
             // TODO - melhorar informacao enviada - enviar apenas, preco, id, none
-            ViewData["Quartos"] = _context.Quartos.OrderBy(q => q.Nome).ToArray();
+            //ViewData["Quartos"] = _context.Quartos.OrderBy(q => q.Nome).ToArray();
+            var lista = new List<object>();
 
+            var listaQuartos = _context.Quartos
+                .OrderBy(q => q.Nome)
+                .Include(q => q.ListaReservas)
+                .ToList();
+
+            foreach (var quarto in listaQuartos)
+            {
+
+                var obj = new
+                {
+                    Id = quarto.Id,
+                    Nome = quarto.Nome,
+                    Preco = quarto.Preco,
+                    Reservas = new List<object>()
+                };
+
+                foreach (var reservaQuarto in quarto.ListaReservas)
+                {
+                    var objReserva = new
+                    {
+                        Id = reservaQuarto.Id,
+                        DataCheckIN = reservaQuarto.DataCheckIN,
+                        DataCheckOUT = reservaQuarto.DataCheckOUT
+                    };
+
+                    obj.Reservas.Add(objReserva);
+                }
+                lista.Add(obj);
+
+            }
+
+            ViewData["Quartos"] = lista;
             return View(reserva);
         }
 
@@ -382,7 +466,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             }
             var reservaGuardada = await _context.Reservas
                 .Include(r => r.ListaServicos)
-                .Include(r=> r.Hospede)
+                .Include(r => r.Hospede) // Incluir o Hospede na consulta
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             //var reservaGuardada = await _context.Reservas.FindAsync(id);
@@ -399,14 +483,14 @@ namespace HOTEL360___Trabalho_final.Controllers
                 reservaGuardada.DataCheckIN = reserva.DataCheckIN;
                 reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
                 reservaGuardada.QuartoFK = reserva.QuartoFK;
-           
+
             }
             if (reserva.DataCheckIN == DateTime.MinValue && reserva.DataCheckOUT != DateTime.MinValue) {
                 reservaGuardada.ValorPago = reserva.ValorPago;
                 reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
                 reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
                 reservaGuardada.QuartoFK = reserva.QuartoFK;
-                        
+
             }
             if (reserva.DataCheckIN != DateTime.MinValue && reserva.DataCheckOUT == DateTime.MinValue)
             {
@@ -424,7 +508,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {                    
+                {
 
                     // Verifica se a data de check-in é inferior à data da reserva
                     if (reservaGuardada.DataCheckIN < reservaGuardada.DataReserva)
@@ -503,8 +587,8 @@ namespace HOTEL360___Trabalho_final.Controllers
 
                     // Calcular o valor dos serviços
                     decimal valorServicos = 0;
-                    foreach (var serv in reservaGuardada.ListaServicos) {                        
-                            valorServicos += serv.Preco * numeroDeNoites;                        
+                    foreach (var serv in reservaGuardada.ListaServicos) {
+                        valorServicos += serv.Preco * numeroDeNoites;
                     }
 
                     // Calcular o ValorTotal
@@ -608,7 +692,7 @@ namespace HOTEL360___Trabalho_final.Controllers
             // Calcula o número de noites no hotel
             TimeSpan duracao = reserva.DataCheckOUT.Date - reserva.DataCheckIN.Date;
             int numeroDeNoites = duracao.Days; // Usamos duracao.Days para garantir que o número de dias seja arredondado corretamente
-            
+
             // Procura o objeto Quartos utilizando o Id (QuartoFK) da reserva
             var quarto = _context.Quartos.FirstOrDefault(q => q.Id == reserva.QuartoFK);
 
@@ -625,6 +709,6 @@ namespace HOTEL360___Trabalho_final.Controllers
             }
 
             return valorTotal;
-        }        
+        }
     }
 }

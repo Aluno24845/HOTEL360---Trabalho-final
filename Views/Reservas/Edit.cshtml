@@ -65,10 +65,10 @@
                             @* Caso seja um Gerente ou um Reccecionista escolhe o Hospede para associar à reserva*@
                             @if (User.IsInRole("Gerentes") || User.IsInRole("Reccecionistas"))
                             {
-                            <div class="form-group">
-                                <label asp-for="Hospede" class="control-label"></label>
-                                <span class="form-control">@Model.Hospede.Nome<span>
-                            </div>
+                                <div class="form-group">
+                                    <label asp-for="Hospede" class="control-label"></label>
+                                    <span class="form-control">@Model.Hospede.Nome<span>
+                                </div>
                             }
                             <div class="form-group">
                                 <label asp-for="ValorPagoAux" class="control-label"></label>
@@ -77,10 +77,10 @@
                             </div>
                             <hr />
                             <div class="form-group">
-                                <label >Valor Total </label>
+                                <label>Valor Total </label>
                                 <span id="valorTotal"></span>
                             </div>
-                      
+
                             <div class="form-group">
                                 <br />
                                 <input type="submit" value="Guardar" class="btn btn-primary" />
@@ -102,40 +102,116 @@
         var numeroDeDias = 0;
         var precoQuarto = parseFloat("@Model.Quarto.Preco");
         var valorTotal = 0;
+        const dataCheckIN = document.getElementById("dataCheckIN");
+        const dataCheckOUT = document.getElementById("dataCheckOUT");
+        const quartoDropdown = document.getElementById("QuartoFK")
+        const quartoSelecionado = quartoDropdown.value;
+        const dataCheckInInicial = new Date(dataCheckIN.value);
+        const dataCheckOutInicial = new Date(dataCheckOUT.value);
+
+      
+        function activarQuartoDropdown() {
+            if (!dataCheckIN.value || !dataCheckOUT.value) {
+                quartoDropdown.disabled = true
+                return
+            }
+            else
+                quartoDropdown.disabled = false
+
+            const quartosDisponiveis = [];
+
+            const checkInDate = new Date(dataCheckIN.value);
+            const checkOutDate = new Date(dataCheckOUT.value);
+
+            for (const quarto of listaTodosOsQuartos) {
+                const quartoOcupado = quarto.reservas.some(reserva => {
+                    const reservaCheckIn = new Date(reserva.dataCheckIN);
+                    const reservaCheckOut = new Date(reserva.dataCheckOUT);
+                    return (
+                        (checkInDate >= reservaCheckIn && checkInDate < reservaCheckOut) ||
+                        (checkOutDate > reservaCheckIn && checkOutDate <= reservaCheckOut) ||
+                        (checkInDate <= reservaCheckIn && checkOutDate >= reservaCheckOut)
+                    );
+                });
+
+                if (!quartoOcupado) {
+                    quartosDisponiveis.push(quarto);
+                }
+            }
+
+            console.log(quartosDisponiveis)
+
+            var opcoesQuartos = document.querySelectorAll('#QuartoFK option');
+
+            opcoesQuartos.forEach(function (opcao) {
+
+                if ((opcao.value != "-1" && quartoSelecionado != opcao.value)) {
+                    opcao.remove();
+                }
+
+                if (quartoSelecionado == opcao.value) {
+                    if (!(dataCheckInInicial <= new Date(dataCheckIN.value) && dataCheckOutInicial >= new Date(dataCheckOUT.value))) {
+
+                        opcao.remove();
+                        precoQuarto = 0;
+                    }
+                }
+            });
+
+            for (const quarto of quartosDisponiveis) {
+                const option = document.createElement('option');
+                option.value = quarto.id;
+                option.text = quarto.nome;
+                quartoDropdown.appendChild(option);
+            }
 
 
+
+        }
+
+        activarQuartoDropdown();
+
+        // Função para contar os dias entre duas datas
         function contarDiasEntreDuasDatas(date1, date2) {
-            const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
+            const oneDay = 24 * 60 * 60 * 1000; // Um dia em milisegundos
             const firstDate = new Date(date1);
             const secondDate = new Date(date2);
 
-            // Calculate the difference in days
-            const diffDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+            // Calcula a diferença em dias
+            const diferencadias = Math.round(Math.abs((firstDate - secondDate) / oneDay));
 
-            return diffDays;
+            return diferencadias;
         }
 
+        // Função para calcular o preço TOTAL da estadia
         function calculaPrecoDaEstadia(dataInicio, dataFim) {
             const listaServicosSelectionados = document.querySelectorAll('.servicos-selecionados')
             numeroDeDias = contarDiasEntreDuasDatas(dataInicio.value, dataFim.value)
- 
 
             var totalServicoPorNoite = 0;
+
+            // Calcula o preço total dos serviços selecionados
             listaServicosSelectionados.forEach(function (servico) {
                 if (servico.checked) {
                     totalServicoPorNoite += parseFloat(servico.getAttribute('data-preco'));
                 }
             });
 
+            // Calcula o preço total da estadia
             var totalServicoTodasNoites = numeroDeDias * totalServicoPorNoite;
             valorTotal = numeroDeDias * precoQuarto + totalServicoTodasNoites
 
+            // Atualiza o valor total exibido na página
             const valorTotalElement = document.getElementById("valorTotal");
-            valorTotalElement.innerText = valorTotal.toFixed(2);
+            //valorTotalElement.innerText = valorTotal.toFixed(2);
+            valorTotalElement.innerText = valorTotal.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+
 
         }
 
+        
         document.addEventListener("DOMContentLoaded", function () {
+            // Obtenção dos elementos do DOM
             const dataCheckIN = document.getElementById("dataCheckIN");
             const dataCheckOUT = document.getElementById("dataCheckOUT");
             const DataCheckINHidden = document.getElementById("DataCheckINHidden").value;
@@ -147,14 +223,15 @@
             const quartoSelecionado = document.getElementById("QuartoFK");
             calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
 
+            // // Adiciona o evento de mudança ao dropdown de quartos
             quartoSelecionado.addEventListener('change', function () {
                 console.log(quartoSelecionado.value)
                 precoQuarto = parseFloat(listaTodosOsQuartos.find(x => x.id == quartoSelecionado.value).preco);
                 calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
             })
 
-
-            listaServicosSelectionados.forEach(function(elemento){ 
+            // Adiciona o evento de mudança aos serviços selecionados
+            listaServicosSelectionados.forEach(function (elemento) {
                 elemento.addEventListener('change', function () {
                     calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
                 })
@@ -182,6 +259,7 @@
                 }
             });
 
+            // Adiciona o evento de mudança à data de Check-In 
             dataCheckIN.addEventListener("change", function () {
                 const checkInDate = new Date(dataCheckIN.value);
 
@@ -203,11 +281,12 @@
                 checkInDate.setHours(5, 0, 0, 0); // Define a hora para 5h da manhã do dia seguinte
                 const minCheckOutDate = checkInDate.toISOString().slice(0, 16); // Formata a data para datetime-local
                 dataCheckOUT.min = minCheckOutDate;
-
-                 calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+                activarQuartoDropdown()
+                calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
 
             });
 
+            // Adiciona o evento de mudança à data de Check-Out
             dataCheckOUT.addEventListener("change", function () {
 
                 const checkOutDate = new Date(dataCheckOUT.value);
@@ -218,7 +297,7 @@
                     dataCheckOUT.value = ''; // Limpa o valor se estiver fora do horário permitido
                     return;
                 }
-
+                activarQuartoDropdown()
                 calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
             });
         });
