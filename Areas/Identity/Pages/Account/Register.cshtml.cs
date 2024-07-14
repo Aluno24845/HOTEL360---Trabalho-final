@@ -14,6 +14,7 @@ using HOTEL360___Trabalho_final.Data;
 using HOTEL360___Trabalho_final.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,13 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
         /// </summary>
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// objeto que contém os dados referentes ao ambiente 
+        /// do Servidor
+        /// </summary>
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -44,8 +52,10 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-          ApplicationDbContext context
-         ){
+          ApplicationDbContext context,
+          IWebHostEnvironment webHostEnvironment
+         )
+        {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -53,6 +63,7 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
@@ -110,6 +121,11 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
             /// Recolhe os dados do Utilizador HOSPEDE
             /// </summary>
             public Hospedes Hospede { get; set; }
+
+            /// <summary>
+            /// Representa o ficheiro de avatar enviado pelo utilizador durante o registro.
+            /// </summary>
+            public IFormFile AvatarFile { get; set; }
         }
 
 
@@ -143,9 +159,46 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
             // somos redirecionado para a raiz da app
             returnUrl ??= Url.Content("~/");
 
+            //vars auxiliares
+            string nomeImagem = "";
+            bool haImagem = false;
 
-            // retirado a referência a 'autenticadores' externos
-            //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            // há ficheiro?
+            if (Input.AvatarFile == null)
+            {
+                ModelState.AddModelError("",
+                   "O fornecimento de um Avatar é obrigatório!");
+                return Page();
+            }
+            else
+            {
+                // há ficheiro, mas é imagem?
+                if (!(Input.AvatarFile.ContentType == "image/png" ||
+                       Input.AvatarFile.ContentType == "image/jpeg")
+                   )
+                {
+                    ModelState.AddModelError("",
+                   "Tem de fornecer para o Avatar um ficheiro PNG ou JPG!");
+                    return Page();
+                }
+                else
+                {
+                    // há ficheiro, e é uma imagem válida
+                    haImagem = true;
+                    // obter o nome a atribuir à imagem
+                    Guid g = Guid.NewGuid();
+                    nomeImagem = g.ToString();
+                    // obter a extensão do nome do ficheiro
+                    string extensao = Path.GetExtension(Input.AvatarFile.FileName);
+                    // adicionar a extensão ao nome da imagem
+                    nomeImagem += extensao;
+                    // adicionar o nome do ficheiro ao objeto que
+                    // vem do browser
+                    Input.Hospede.Avatar = nomeImagem;
+
+
+                }
+            }
 
 
             // os dados recebidos são válidos?
@@ -179,10 +232,36 @@ namespace HOTEL360___Trabalho_final.Areas.Identity.Pages.Account
                     // vamos guardar o valor do atributo
                     // que fará a 'ponte' entre a BD
                     // de autenticação e a BD do 'negócio'
-                    Input.Hospede.UserId = user.Id;
+                    Input.Hospede.UserId = user.Id;                    
 
                     try
                     {
+                        // se há ficheiro de imagem,
+                        // vamos guardar no disco rígido do servidor
+                        if (haImagem)
+                        {
+                            // determinar onde se vai guardar a imagem
+                            string nomePastaOndeGuardarImagem =
+                               _webHostEnvironment.WebRootPath;
+                            // já sei o caminho até à pasta wwwroot
+                            // especifico onde vou guardar a imagem
+                            nomePastaOndeGuardarImagem =
+                               Path.Combine(nomePastaOndeGuardarImagem, "Imagens");
+                            // e, existe a pasta 'Imagens'?
+                            if (!Directory.Exists(nomePastaOndeGuardarImagem))
+                            {
+                                Directory.CreateDirectory(nomePastaOndeGuardarImagem);
+                            }
+                            // juntar o nome do ficheiro à sua localização
+                            string nomeFinalDaImagem =
+                               Path.Combine(nomePastaOndeGuardarImagem, nomeImagem);
+
+                            // guardar a imagem no disco rigído
+                            using var stream = new FileStream(
+                               nomeFinalDaImagem, FileMode.Create
+                               );
+                            await Input.AvatarFile.CopyToAsync(stream);
+                        }
                         // guardar os dados na BD
                         _context.Add(Input.Hospede);
                         await _context.SaveChangesAsync();

@@ -4,50 +4,49 @@
     ViewData["Title"] = "Detalhes do Quarto";
 }
 
-<h1>Detalhes do Quarto</h1>
+<br />
+<h1 style="color: #fff;">Detalhes do Quarto</h1>
+<br />
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Capacidade)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Capacidade)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Preco)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Preco)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Imagem)
-        </dt>
-        <dd class = "col-sm-10">            
-            <img src="~/Imagens/@Html.DisplayFor(model => model.Imagem)"
-                 alt="imagem do quarto @Html.DisplayFor(model => model.Nome)"
-                 title="@Html.DisplayFor(model => model.Nome)"
-                 width="100px" />
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="row no-gutters">
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h1 class="card-title">@Html.DisplayFor(model => model.Nome)</h1>
+                        <br />
+                        <p class="card-text"><strong>@Html.DisplayNameFor(model => model.Capacidade): </strong> @Html.DisplayFor(model => model.Capacidade)</p>
+                        <p class="card-text"><strong>@Html.DisplayNameFor(model => model.Preco): </strong> @Html.DisplayFor(model => model.Preco)€ por noite</p>
+                        <p class="card-text"><strong>@Html.DisplayNameFor(model => model.Localizacao): </strong> @Html.DisplayFor(model => model.Localizacao)</p>
+                        <p class="card-text"><strong>@Html.DisplayNameFor(model => model.Descricao): </strong> @Html.DisplayFor(model => model.Descricao)</p>
+                        <br />
+                        <div class="mt-3">
+                            @if (User.IsInRole("Gerentes"))
+                            {
+                                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+                                
+                            }
+                            <a class="btn btn-secondary" asp-action="Index">Regressar à listagem de Quartos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <img src="~/Imagens/@Html.DisplayFor(model => model.Imagem)"
+                         alt="imagem do quarto @Html.DisplayFor(model => model.Nome)"
+                         title="@Html.DisplayFor(model => model.Nome)"
+                         class="card-img" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        </dd>
-    </dl>
-</div>
-<div>
-    @if (User.IsInRole("Gerentes")) {
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a>
-    }|
-    <a asp-action="Index">Regressar à listagem de Quartos</a>
-</div>
+<style>
+    .card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+

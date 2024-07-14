@@ -24,12 +24,14 @@ namespace HOTEL360___Trabalho_final.Models{
         /// <summary>
         /// Nome do Quarto 
         /// </summary>
-        [StringLength(100)]
+        [StringLength(50)]
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
         public string Nome { get; set; }
 
         /// <summary>
         /// Capacidade do Quarto
-        /// </summary>
+        /// </summary>«
+        [Required(ErrorMessage = "A {0} do querto é de preenchimento obrigatório")]
         public int Capacidade { get; set; }
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace HOTEL360___Trabalho_final.Models{
         [NotMapped] // não representa este atributo na BD
         [StringLength(8)]
         [Display(Name = "Preço")]
-        [Required(ErrorMessage = "O {0} é obrigatória.")]
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
         [RegularExpression("[0-9]+[.,]?[0-9]{0,2}",
            ErrorMessage = "só aceita digitos numéricos, separados por . ou por ,")]
         public string PrecoAux { get; set; }
@@ -62,6 +64,14 @@ namespace HOTEL360___Trabalho_final.Models{
         /// </summary>
         [StringLength(50)] // define o tamanho máximo como 50 caracteres
         public string? Imagem { get; set; } // o ? torna o preenchimento facultativo
+
+        /// <summary>
+        /// Localização do Quarto
+        /// </summary>
+        [Display(Name = "Localização")]
+        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório")]
+        [StringLength(255)]
+        public string Localizacao { get; set; }
 
         /* ************************************************
        * Vamos criar as Relações (FKs) com outras tabelas

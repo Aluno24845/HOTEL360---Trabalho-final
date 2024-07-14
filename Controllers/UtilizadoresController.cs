@@ -23,6 +23,12 @@ namespace HOTEL360___Trabalho_final.Controllers{
         private readonly ApplicationDbContext _context;
 
         /// <summary>
+        /// objeto que contém os dados referentes ao ambiente 
+        /// do Servidor
+        /// </summary>
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        /// <summary>
         /// referência para gerar Hash para password
         /// </summary>
         public readonly IPasswordHasher<IdentityUser> _passwordHasher;
@@ -37,9 +43,14 @@ namespace HOTEL360___Trabalho_final.Controllers{
         /// </summary>
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UtilizadoresController(ApplicationDbContext context, IPasswordHasher<IdentityUser> passwordHasher, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
-        {
+        public UtilizadoresController(
+            ApplicationDbContext context,
+            IWebHostEnvironment webHostEnvironment,
+            IPasswordHasher<IdentityUser> passwordHasher, 
+            UserManager<IdentityUser> userManager, 
+            RoleManager<IdentityRole> roleManager)  {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
             _passwordHasher = passwordHasher;
             _userManager = userManager;
             _roleManager = roleManager;
@@ -59,12 +70,26 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 return NotFound();
             }
 
+            // Carregar o utilizador incluindo os dados do ASP.NET Identity (AspNetUsers)
             var utilizador = await _context.Utilizadores
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (utilizador == null)
             {
                 return NotFound();
             }
+
+            // Buscar o email do utilizador a partir do ASP.NET Identity (AspNetUsers)
+            var userEmail = await _context.Users
+                .Where(u => u.Id == utilizador.UserId)
+                .Select(u => u.Email)
+                .FirstOrDefaultAsync();
+
+            if (userEmail == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["UserEmail"] = userEmail;
 
             return View(utilizador);
         }
@@ -80,9 +105,73 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Email, Password, ConfirmPassword,Nome,Telemovel,Avatar,DataNascimento,NIF, Tipo, NumReccecionista")] CriarUtilizadores criarutilizador)
+        public async Task<IActionResult> Create([Bind("Email, Password, ConfirmPassword,Nome,Telemovel,Avatar,DataNascimento,NIF, Tipo, NumReccecionista")] CriarUtilizadores criarutilizador, IFormFile ImagemLogo)
         {
-           
+
+            /* Algoritmo
+        * 1- há ficheiro?
+        *    1.1 - não há ficheiro!
+        *          devolver à view dizendo que o ficheiro
+        *          é obrigatório
+        *    1.2 - há ficheiro!
+        *          Mas, é uma imagem (PNG, JPG)?
+        *          1.2.1 - não é PNG nem JPG
+        *                  devolver o controlo à View
+        *                  e pedir PNG ou JPG.......
+        *          1.2.2 - é uma imagem
+        *                  - determinar o nome a atribuir 
+        *                    ao ficheiro
+        *                  - escrever esse nome na BD
+        *                  - se a escrita na BD se concretizar
+        *                    é que o ficheiro é guardado no 
+        *                    disco rígido
+        */
+            //Validação do tipo
+            if (criarutilizador.Tipo == "-1")
+            {
+                ModelState.AddModelError("", "Escolha um tipo de utilizador, por favor.");
+                return View(criarutilizador);
+            }
+
+            // vars. auxiliares
+            string nomeImagem = "";
+            bool haImagem = false;
+
+            // há ficheiro?
+            if (ImagemLogo == null)
+            {
+                ModelState.AddModelError("",
+                   "O fornecimento de um Avatar é obrigatório!");
+                return View(criarutilizador);
+            }
+            else
+            {
+                // há ficheiro, mas é imagem?
+                if (!(ImagemLogo.ContentType == "image/png" ||
+                       ImagemLogo.ContentType == "image/jpeg")
+                   )
+                {
+                    ModelState.AddModelError("",
+                   "Tem de fornecer para o Avatar um ficheiro PNG ou JPG!");
+                    return View(criarutilizador);
+                }
+                else
+                {
+                    // há ficheiro, e é uma imagem válida
+                    haImagem = true;
+                    // obter o nome a atribuir à imagem
+                    Guid g = Guid.NewGuid();
+                    nomeImagem = g.ToString();
+                    // obter a extensão do nome do ficheiro
+                    string extensao = Path.GetExtension(ImagemLogo.FileName);
+                    // adicionar a extensão ao nome da imagem
+                    nomeImagem += extensao;
+                    // adicionar o nome do ficheiro ao objeto que
+                    // vem do browser
+                    criarutilizador.Avatar = nomeImagem;
+                }
+            }
+
             //verifica se o modelo é válido
             if (ModelState.IsValid) {
                 // Cria uma nova instância de IdentityUser
@@ -111,6 +200,33 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 _context.Users.Add(applicationUser);
                 // Guarda as mudanças na bd
                 await _context.SaveChangesAsync();
+
+                // se há ficheiro de imagem,
+                // vamos guardar no disco rígido do servidor
+                if (haImagem)
+                {
+                    // determinar onde se vai guardar a imagem
+                    string nomePastaOndeGuardarImagem =
+                       _webHostEnvironment.WebRootPath;
+                    // já sei o caminho até à pasta wwwroot
+                    // especifico onde vou guardar a imagem
+                    nomePastaOndeGuardarImagem =
+                       Path.Combine(nomePastaOndeGuardarImagem, "Imagens");
+                    // e, existe a pasta 'Imagens'?
+                    if (!Directory.Exists(nomePastaOndeGuardarImagem))
+                    {
+                        Directory.CreateDirectory(nomePastaOndeGuardarImagem);
+                    }
+                    // juntar o nome do ficheiro à sua localização
+                    string nomeFinalDaImagem =
+                       Path.Combine(nomePastaOndeGuardarImagem, nomeImagem);
+
+                    // guardar a imagem no disco rigído
+                    using var stream = new FileStream(
+                       nomeFinalDaImagem, FileMode.Create
+                       );
+                    await ImagemLogo.CopyToAsync(stream);
+                }
 
                 // Procuramos o utilizador recém-criado pelo Id
                 var usercreated = await _context.Users.FindAsync(applicationUser.Id);
@@ -161,7 +277,6 @@ namespace HOTEL360___Trabalho_final.Controllers{
                     utilizador.Telemovel = criarutilizador.Telemovel;
                     utilizador.DataNascimento = criarutilizador.DataNascimento;
                     utilizador.Avatar = criarutilizador.Avatar;
-                    utilizador.NumReccecionista = criarutilizador.NumReccecionista;
                     utilizador.UserId = applicationUser.Id;
 
                     // Adicionamos o objeto Reccecionistas à tabela Utilizadores
@@ -198,7 +313,27 @@ namespace HOTEL360___Trabalho_final.Controllers{
             {
                 return NotFound();
             }
-            return View(utilizador);
+
+            // Carrega o utilizador da tabela AspNetUsers pelo UserId do utilizador
+            var user = await _userManager.FindByIdAsync(utilizador.UserId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Cria um modelo para a edição com os dados do utilizador e UserId
+            var model = new Utilizadores
+            {
+                Id = utilizador.Id,
+                Nome = utilizador.Nome,
+                Telemovel = utilizador.Telemovel,
+                Avatar = utilizador.Avatar,
+                DataNascimento = utilizador.DataNascimento,
+                UserId = user.Id // Passa o UserId para o modelo
+            };
+
+            return View(model);
+
         }
 
         // POST: Utilizadores/Edit/5
@@ -206,7 +341,7 @@ namespace HOTEL360___Trabalho_final.Controllers{
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telemovel,Avatar,DataNascimento,UserId")] Utilizadores utilizador)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telemovel,Avatar,DataNascimento,UserId")] Utilizadores utilizador, IFormFile ImagemLogo)
         {
             if (id != utilizador.Id)
             {
@@ -217,6 +352,35 @@ namespace HOTEL360___Trabalho_final.Controllers{
             {
                 try
                 {
+                    if (ImagemLogo != null && (ImagemLogo.ContentType == "image/png" || ImagemLogo.ContentType == "image/jpeg"))
+                    {
+                        // Obter o nome a atribuir à imagem
+                        Guid g = Guid.NewGuid();
+                        string nomeImagem = g.ToString();
+                        // Obter a extensão do nome da imagem
+                        string extensao = Path.GetExtension(ImagemLogo.FileName);
+                        nomeImagem += extensao;
+
+                        // Define o caminho para guardar a imagem
+                        string nomePastaOndeGuardarImagem = Path.Combine(_webHostEnvironment.WebRootPath, "Imagens");
+                        if (!Directory.Exists(nomePastaOndeGuardarImagem))
+                        {
+                            Directory.CreateDirectory(nomePastaOndeGuardarImagem);
+                        }
+                        string nomeFinalDaImagem = Path.Combine(nomePastaOndeGuardarImagem, nomeImagem);
+
+                        // Guarda a imagem
+                        using var stream = new FileStream(nomeFinalDaImagem, FileMode.Create);
+                        await ImagemLogo.CopyToAsync(stream);
+
+                        // Atualiza o avatar do utilizador
+                        utilizador.Avatar = nomeImagem;
+                    }
+                    else
+                    {
+                        // Não atualize o campo Avatar se nenhuma nova imagem for carregada
+                        _context.Entry(utilizador).Property(u => u.Avatar).IsModified = false;
+                    }
                     _context.Update(utilizador);
                     await _context.SaveChangesAsync();
                 }
@@ -265,6 +429,19 @@ namespace HOTEL360___Trabalho_final.Controllers{
                 _context.Utilizadores.Remove(utilizador);
             }
 
+            // Encontra o utilizador na tabela AspNetUsers pelo Id do Utilizador
+            var user = await _userManager.FindByIdAsync(utilizador.UserId);
+            if (user != null)
+            {
+                // Remove o utilizador da tabela AspNetUsers
+                var result = await _userManager.DeleteAsync(user);
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", "Erro a excluir utilizador.");
+                }
+            }
+
+            // Salva as alterações na base de dados
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

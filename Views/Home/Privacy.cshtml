@@ -1,14 +1,41 @@
 ﻿@{
     ViewData["Title"] = "Politicas de Privacidade";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>A nossa aplicação possui diferentes tipos de utilizadores, cada um com funções específicas:</p>
+<div class="card mt-4 mb-4">
+    <div class="card-body">
+        <div class="text-center blue-text">
+            <h1>@ViewData["Title"]</h1>
+            <p>A nossa aplicação possui diferentes tipos de utilizadores, cada um com funções específicas:</p>
+        </div>
 
-<ul>
-    <li><strong>Gerentes:</strong> Responsáveis pela administração do hotel, têm acesso completo a todas as funcionalidades da aplicação, incluindo a gestão de quartos, reservas, serviços e funcionários.</li>
-    <li><strong>Rececionistas:</strong> Encarregados de realizar e gerenciar reservas, check-ins e check-outs dos hóspedes, bem como atender às necessidades dos clientes durante a estadia.</li>
-    <li><strong>Hóspedes:</strong> Utilizadores finais que fazem reservas, visualizam informações sobre quartos e serviços disponíveis.</li>
-</ul>
+        <hr>
+        <div class="blue-text">
+            <h2 class="text-center">Gerentes</h2>
+            <p class="text-center">Responsáveis pela administração do hotel, têm acesso completo a todas as funcionalidades da aplicação, incluindo a gestão de quartos, reservas, serviços e funcionários.</p>
 
-<p>Estamos comprometidos em proteger a privacidade de todos os nossos utilizadores. Para mais informações sobre como tratamos seus dados pessoais, contacte-nos por email.</p>
+        </div>
+        <hr>
+        <div class="blue-text">
+            <h2 class="text-center">Rececionistas</h2>
+            <p class="text-center">Encarregados de realizar e gerenciar reservas, check-ins e check-outs dos hóspedes, bem como atender às necessidades dos clientes durante a estadia..</p>
+        </div>
+        <hr>
+        <div class="blue-text">
+            <h2 class="text-center">Hospedes</h2>
+            <p class="text-center">Utilizadores finais que fazem reservas, visualizam informações sobre quartos e serviços disponíveis..</p>
+
+        </div>
+        <hr />
+        <div class="text-center blue-text">
+            <p>Estamos comprometidos em proteger a privacidade de todos os nossos utilizadores. Para mais informações sobre como tratamos seus dados pessoais, contacte-nos por email.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .blue-text {
+        color: #082233; /* Azul */
+    }
+
+</style>

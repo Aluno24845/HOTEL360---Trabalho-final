@@ -10,49 +10,59 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">                
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/Imagens/logo.png" alt="Logo do HOTEL360" class="img-fluid" style="max-height: 50px" />
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm blue-background border-bottom box-shadow ">
+            <div class="container-fluid ">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Quartos" asp-action="Index" title="Mostra os dados dos Quartos">Quartos</a>
-                        </li>
-                        @if (User.Identity.IsAuthenticated) {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservas" asp-action="Index" title="Mostra os dados das Reservas">Reservas</a>
-                            </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Servicos" asp-action="Index" title="Mostra os dados dos Serviços">Serviços</a>
-                        </li>
-                        @if (User.IsInRole("Gerentes")) {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Utilizadores" asp-action="Index" title="Mostra os dados dos Utilizadores">Utilizadores</a>
-                            </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidade</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
+                <div class="navbar-collapse collapse d-flex justify-content-end ">
+                    <partial name="_LoginPartial" class="ml-auto" /> <!-- Login no canto direito -->
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div class="container-fluid ">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block sidebar blue-background white-text ">
+                <div class="sidebar-sticky text-center">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/Imagens/logo.png" alt="Logo do HOTEL360" class="img-fluid" style="max-height: 300px" />
+                    </a>
+                    <div class="navbar-collapse collapse d-sm-inline-flex  justify-content-between text-center">
+                        <ul class="nav flex-column">
+                            <li class="nav-item text-center mb-3">
+                                <a  class="white-text" asp-area="" asp-controller="Quartos" asp-action="Index" title="Mostra os dados dos Quartos" style="font-size: 1.2rem;">Quartos</a>
+                            </li>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item text-center mb-3">
+                                    <a class="white-text"  asp-area="" asp-controller="Reservas" asp-action="Index" title="Mostra os dados das Reservas" style="font-size: 1.2rem;">Reservas</a>
+                                </li>
+                            }
+                            <li class="nav-item text-center mb-3">
+                                <a  class="white-text" asp-area="" asp-controller="Servicos" asp-action="Index" title="Mostra os dados dos Serviços" style="font-size: 1.2rem;">Serviços</a>
+                            </li>
+                            @if (User.IsInRole("Gerentes"))
+                            {
+                                <li class="nav-item text-center mb-3">
+                                    <a  class="white-text" asp-area="" asp-controller="Utilizadores" asp-action="Index" title="Mostra os dados dos Utilizadores" style="font-size: 1.2rem;">Utilizadores</a>
+                                </li>
+                            }
+                            <li class="nav-item text-center">
+                                <a  class="white-text" asp-area="" asp-controller="Home" asp-action="Privacy" style="font-size: 1.2rem;">Privacidade</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-2">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
+
+    <footer class="border-top footer text-muted blue-background">
         <div class="container">
             &copy; 2024 - HOTEL360___Trabalho_final - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidade</a>
         </div>
@@ -63,3 +73,17 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<style>
+    .blue-background {
+        background-color: #082233; /* Azul */
+    }
+
+    .white-text {
+        color: #FFFFFF; /* Branco */
+    }
+
+    .blue-background hr {
+        border-top: 1px solid #FFFFFF; /* Linha horizontal branca */
+    }
+</style>

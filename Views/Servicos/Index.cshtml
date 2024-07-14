@@ -4,58 +4,63 @@
     ViewData["Title"] = "Serviços";
 }
 
-<h1>Lista de Serviços</h1>
+<br />
+<h1 style="color: #ffffff;">Lista de Serviços</h1>
 
-@if (User.IsInRole("Gerentes")){
-    <p>
-        <a asp-action="Create">Novo Serviço</a>
-    </p>
+@if (User.IsInRole("Gerentes"))
+{
+    <h4>
+        <button class="btn-create" onclick="window.location.href='@Url.Action("Create")'">Novo Serviço</button>
+    </h4>
+    <br />
 }
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descricao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Preco)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Preco)
-            </td>
-            <td>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">@Html.DisplayFor(modelItem => item.Nome)</h2>
+                    <p class="card-text"><strong>@Html.DisplayNameFor(model => model.Preco): </strong>@Html.DisplayFor(modelItem => item.Preco)€ por dia</p>
+                    <p class="card-text"><strong>@Html.DisplayNameFor(model => model.Descricao): </strong>@Html.DisplayFor(modelItem => item.Descricao)</p>                                    
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <text>
+                        <p>
                             @if (User.IsInRole("Gerentes"))
                             {
-                                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
                             }
-                            |
-                            <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+
+                            <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
                             @if (User.IsInRole("Gerentes"))
                             {
-                                <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
+                                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
                             }
-                        </text>
+                        </p>
                     }
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* Estilos para o botão */
+    .btn-create {
+        background-color: #e78d3c; /* Cor de fundo laranja, pode ser ajustada conforme necessário */
+        color: #fff; /* Cor do texto branco */
+        border: none; /* Remove a borda padrão */
+        padding: 10px 20px; /* Espaçamento interno */
+        font-size: 18px; /* Tamanho da fonte */
+        cursor: pointer; /* Mostra um cursor ao passar o mouse */
+        border-radius: 5px; /* Borda arredondada */
+        transition: background-color 0.3s ease; /* Efeito de transição suave */
+    }
+
+     /* Hover (quando o mouse passa por cima) */
+    .btn-create:hover {
+        background-color: #e06f09; /* Cor de fundo mais escura ao passar o mouse */
+    }
+
+    
+</style>

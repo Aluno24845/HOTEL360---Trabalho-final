@@ -17,7 +17,7 @@ namespace HOTEL360___Trabalho_final.Models{
         /// Nome do Utilizador
         /// </summary>
         [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
-        [StringLength(100)]
+        [StringLength(50)]
         public string Nome { get; set; }
 
         /// <summary>
@@ -27,12 +27,14 @@ namespace HOTEL360___Trabalho_final.Models{
         [StringLength(9)]
         [RegularExpression("9[1236][0-9]{7}",
              ErrorMessage = "O {0} só aceita 9 digitos")]
+        [Required(ErrorMessage = "O {0} é de preenchimento obrigatório")]
         public string Telemovel { get; set; }
 
         /// <summary>
         /// Nome do ficheiro que contém o avatar do Utilizador
         /// </summary>
-        public string Avatar { get; set; }
+        [StringLength(50)] // define o tamanho máximo como 50 caracteres
+        public string? Avatar { get; set; } // o ? torna o preenchimento facultativo        
 
         /// <summary>
         /// Data de nascimento do Utilizador

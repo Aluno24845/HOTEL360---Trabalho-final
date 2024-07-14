@@ -1,4 +1,5 @@
 ﻿using HOTEL360___Trabalho_final.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,27 @@ namespace HOTEL360___Trabalho_final.Data{
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options){
         }
+        //protected override void OnModelCreating(ModelBuilder builder)
+        //{
+        //    /* Esta instrução importa tudo o que está pre-definido
+        //     * na super classe
+        //     */
+        //    base.OnModelCreating(builder);
+
+        //    /* Adição de dados à Base de Dados
+        //     * Esta forma é PERSISTENTE, pelo que apenas deve ser utilizada em 
+        //     * dados que perduram da fase de 'desenvolvimento' para a fase de 'produção'.
+        //     * Implica efetuar um 'Add-Migration'
+        //     * 
+        //     * Atribuir valores às ROLES
+        //     */
+        //    builder.Entity<IdentityRole>().HasData(
+        //        new IdentityRole { Id = "h", Name = "Hospedes", NormalizedName = "HOSPEDES" },
+        //        new IdentityRole { Id = "r", Name = "Reccecionistas", NormalizedName = "RECCECIONISTAS" },
+        //        new IdentityRole { Id = "g", Name = "Gerentes", NormalizedName = "GERENTES" }
+        //        );
+
+        //}
 
         // definição das 'tabelas'
         /// <summary>

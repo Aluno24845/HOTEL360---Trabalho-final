@@ -36,10 +36,21 @@ namespace HOTEL360___Trabalho_final.Models{
         public decimal ValorPago { get; set; }
 
         /// <summary>
+        /// Valor total da reserva
+        /// </summary>
+        [Display(Name = "Valor Total")]
+        public decimal ValorTotal { get; set; }
+
+        /// <summary>
+        /// Valor que falta pagar da reserva
+        /// </summary>
+        [Display(Name = "Valor que falta pagar")]
+        public decimal ValorAPagar { get; set; }
+
+        /// <summary>
         /// Data em que foi feita a reserva
         /// </summary>
         [Display(Name = "Data da reserva")]
-        [Required(ErrorMessage = "A {0} é de preenchimento obrigatório.")]
         [DisplayFormat(ApplyFormatInEditMode = true,
                      DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime DataReserva {  get; set; }

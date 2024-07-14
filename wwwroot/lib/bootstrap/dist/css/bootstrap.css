@@ -627,7 +627,6 @@ progress {
   padding-right: var(--bs-gutter-x, 0.75rem);
   padding-left: var(--bs-gutter-x, 0.75rem);
   margin-right: auto;
-  margin-left: auto;
 }
 
 @media (min-width: 576px) {
@@ -3986,7 +3985,7 @@ textarea.form-control-lg {
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: 1.50rem;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -4041,6 +4040,7 @@ textarea.form-control-lg {
 
 .navbar-toggler-icon {
   display: inline-block;
+  color: aliceblue;
   width: 1.5em;
   height: 1.5em;
   vertical-align: middle;

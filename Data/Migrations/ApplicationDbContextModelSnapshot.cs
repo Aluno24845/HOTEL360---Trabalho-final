@@ -42,9 +42,15 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Localizacao")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("Nome")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("Preco")
                         .HasColumnType("decimal(18,2)");
@@ -80,7 +86,13 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                     b.Property<int?>("ReccecionistasId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("ValorAPagar")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("ValorPago")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ValorTotal")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -129,7 +141,8 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateOnly>("DataNascimento")
                         .HasColumnType("date");
@@ -141,10 +154,11 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Telemovel")
+                        .IsRequired()
                         .HasMaxLength(9)
                         .HasColumnType("nvarchar(9)");
 
@@ -306,12 +320,10 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -348,12 +360,10 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -409,9 +419,6 @@ namespace HOTEL360___Trabalho_final.Data.Migrations
             modelBuilder.Entity("HOTEL360___Trabalho_final.Models.Reccecionistas", b =>
                 {
                     b.HasBaseType("HOTEL360___Trabalho_final.Models.Utilizadores");
-
-                    b.Property<int>("NumReccecionista")
-                        .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("Reccecionistas");
                 });
