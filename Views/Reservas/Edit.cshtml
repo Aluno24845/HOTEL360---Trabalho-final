@@ -16,9 +16,11 @@
                     <div class="card-body">
                         <form asp-action="Edit">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" asp-for="Id" />
+                            <input type="hidden" asp-for="Id" />                            
                             <input type="hidden" id="DataCheckINHidden" name="DataCheckINHidden" value="@Model.DataCheckIN.ToString("yyyy-MM-ddTHH:mm")" />
                             <input type="hidden" id="DataCheckOUTHidden" name="DataCheckOUTHidden" value="@Model.DataCheckOUT.ToString("yyyy-MM-ddTHH:mm")">
+
+                            <input type="hidden" id="QuartoFKHidden" name="QuartoFKHidden" value="@Model.QuartoFK" )" />
 
                             <div class="form-group">
                                 <label asp-for="DataReserva" class="control-label"></label>
@@ -40,7 +42,6 @@
                             <div class="form-group">
                                 <label asp-for="Quarto" class="control-label"></label>
                                 <select asp-for="QuartoFK" id="QuartoFK" class="form-control" asp-items="ViewBag.QuartoFK">
-                                    <option value="-1">-- Escolha um quarto --</option>
                                 </select>
                             </div>
 
@@ -83,7 +84,7 @@
 
                             <div class="form-group">
                                 <br />
-                                <input type="submit" value="Guardar" class="btn btn-primary" />
+                                <input id="buttonsubmit" type="submit" value="Guardar" class="btn btn-primary" />
                                 <a class="btn btn-secondary" asp-action="Index">Regressar à listagem de Reservas</a>
                             </div>
                         </form>
@@ -98,6 +99,7 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
+        // Definiição de variáveis e constantes
         var listaTodosOsQuartos = @Html.Raw(Json.Serialize(@ViewBag.Quartos));
         var numeroDeDias = 0;
         var precoQuarto = parseFloat("@Model.Quarto.Preco");
@@ -109,13 +111,14 @@
         const dataCheckInInicial = new Date(dataCheckIN.value);
         const dataCheckOutInicial = new Date(dataCheckOUT.value);
 
-      
+        // só ativa o dropdown de quartos se as datas de checkin e checkout estiverem preenchidas
         function activarQuartoDropdown() {
             if (!dataCheckIN.value || !dataCheckOUT.value) {
                 quartoDropdown.disabled = true
                 return
             }
             else
+
                 quartoDropdown.disabled = false
 
             const quartosDisponiveis = [];
@@ -123,6 +126,7 @@
             const checkInDate = new Date(dataCheckIN.value);
             const checkOutDate = new Date(dataCheckOUT.value);
 
+            // Verifica se o quarto está ocupado
             for (const quarto of listaTodosOsQuartos) {
                 const quartoOcupado = quarto.reservas.some(reserva => {
                     const reservaCheckIn = new Date(reserva.dataCheckIN);
@@ -158,6 +162,7 @@
                 }
             });
 
+            // Atualiza o dropdown de quartos com os quartos disponíveis
             for (const quarto of quartosDisponiveis) {
                 const option = document.createElement('option');
                 option.value = quarto.id;
@@ -209,21 +214,28 @@
 
         }
 
-        
+
         document.addEventListener("DOMContentLoaded", function () {
             // Obtenção dos elementos do DOM
             const dataCheckIN = document.getElementById("dataCheckIN");
             const dataCheckOUT = document.getElementById("dataCheckOUT");
-            const DataCheckINHidden = document.getElementById("DataCheckINHidden").value;
-            const DataCheckOUTHidden = document.getElementById("DataCheckOUTHidden").value;
             const dataAtual = new Date();
-            const dataCheckINDate = new Date(DataCheckINHidden);
-            const dataCheckOUTDate = new Date(DataCheckOUTHidden);
+            const dataCheckINDate = new Date(dataCheckIN.value);
+            const dataCheckOUTDate = new Date(dataCheckOUT.value);
             const listaServicosSelectionados = document.querySelectorAll('.servicos-selecionados')
             const quartoSelecionado = document.getElementById("QuartoFK");
+                        
+
+            // Calcula o preço da estadia inicial
             calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
 
-            // // Adiciona o evento de mudança ao dropdown de quartos
+            // quartoSelecionado.addEventListener('click', function (e) {
+            //     if (dataCheckINDate < dataAtual) {
+            //         e.preventDefault();
+            //     }
+            // })
+
+            // Adiciona o evento de mudança ao dropdown de quartos
             quartoSelecionado.addEventListener('change', function () {
                 console.log(quartoSelecionado.value)
                 precoQuarto = parseFloat(listaTodosOsQuartos.find(x => x.id == quartoSelecionado.value).preco);
@@ -232,41 +244,70 @@
 
             // Adiciona o evento de mudança aos serviços selecionados
             listaServicosSelectionados.forEach(function (elemento) {
-                elemento.addEventListener('change', function () {
+                elemento.addEventListener('click', function (e) {
+                    if (dataCheckINDate < dataAtual) {
+                        e.preventDefault();
+
+                    } else {
+                        calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
+                    }
+                })
+                elemento.addEventListener('change', function (e) {
+
                     calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
                 })
+
             })
 
             // Verifica se a data de Check-In já passou da data atual
             if (dataCheckINDate < dataAtual) {
-                dataCheckIN.disabled = true;
-            }
+                dataCheckIN.readOnly = true; // Desativa a edição da data de Check-In
+                dataCheckOUT.readOnly = true; // Desativa a edição da data de Check-Out
+                quartoDropdown.disabled = true; // Desativa o dropdown de quartos
+            } else {
+                // Define o valor mínimo do check-in como a hora atual
+                const minCheckInDate = dataAtual.toISOString().slice(0, 16); // Formata a data para datetime-local
+                dataCheckIN.min = minCheckInDate;
 
+            }           
+            
             // Verifica se a data de Check-Out já passou da data atual
             if (dataCheckOUTDate < dataAtual) {
-                dataCheckOUT.disabled = true;
+                dataCheckOUT.readOnly = true;
             }
+                                  
 
-            // Reativa o campo antes do envio do formulário para enviar o valor original ao servidor
-            document.querySelector("form").addEventListener("submit", function () {
-                if (dataCheckIN.disabled) {
-                    dataCheckIN.disabled = false;
-                    dataCheckIN.value = DataCheckINHidden; // Envia o valor original ao servidor
+            // Adiciona o evento de clique ao botão de submissão
+            document.querySelector("#buttonsubmit").addEventListener("click", function (event) {
+
+                // verifica se pelo menos um serviço foi selecionado
+                if (document.querySelectorAll('.servicos-selecionados:checked').length === 0) {
+                    alert("Por favor, selecione pelo menos um serviço.");
+                    event.preventDefault();
                 }
-                if (dataCheckOUT.disabled) {
-                    dataCheckOUT.disabled = false;
-                    dataCheckOUT.value = DataCheckOUTHidden; // Envia o valor original ao servidor
+
+                // verifica se o valor pago é superiorao valor total 
+                if (parseFloat(document.getElementById("ValorPagoAux").value) >  valorTotal) {
+                    alert("O valor pago não pode ser superior ao valor total da reserva.");
+                    event.preventDefault();
                 }
+
+                // verifica se a data de check In é depois da data de Check Out
+                if (new Date(dataCheckIN.value) >= new Date(dataCheckOUT.value)) {
+                    alert("A data de check-in deve ser anterior à data de check-out.");
+                    event.preventDefault();
+                }
+                                
             });
 
-            // Adiciona o evento de mudança à data de Check-In 
-            dataCheckIN.addEventListener("change", function () {
+            // Adiciona o evento de mudança à data de Check-In
+            dataCheckIN.addEventListener("change", function (e) {
                 const checkInDate = new Date(dataCheckIN.value);
 
                 // Verificação da data atual comparando com Data de Check-IN
                 if (checkInDate < dataAtual) {
                     alert("A data de Check-In não pode ser antes da Data Atual");
-                    dataCheckIN.value = ''; // Limpa o valor se estiver fora do permitido
+                    e.preventDefault()
                     return;
                 }
 
@@ -274,6 +315,7 @@
                 if (checkInDate.getHours() < 8 || checkInDate.getHours() >= 23) {
                     alert("A hora de check-in deve estar entre 8h e 23h.");
                     dataCheckIN.value = ''; // Limpa o valor se estiver fora do horário permitido
+                    e.preventDefault()
                     return;
                 }
 
@@ -287,7 +329,7 @@
             });
 
             // Adiciona o evento de mudança à data de Check-Out
-            dataCheckOUT.addEventListener("change", function () {
+            dataCheckOUT.addEventListener("change", function (e) {
 
                 const checkOutDate = new Date(dataCheckOUT.value);
 
@@ -295,6 +337,7 @@
                 if (checkOutDate.getHours() < 5 || checkOutDate.getHours() >= 17) {
                     alert("A hora de check-out deve estar entre 5h e 17h.");
                     dataCheckOUT.value = ''; // Limpa o valor se estiver fora do horário permitido
+                    e.preventDefault()
                     return;
                 }
                 activarQuartoDropdown()

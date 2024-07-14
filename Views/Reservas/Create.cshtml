@@ -80,7 +80,7 @@
                             </div>
                             <div class="mt-3">
                                 <br />
-                                <input type="submit" value="Adicionar" class="btn btn-primary" />
+                                <input id="buttonsubmit" type="submit" value="Adicionar" class="btn btn-primary" />
                                 <a class="btn btn-secondary" asp-action="Index">Regressar à listagem de Reservas</a>
                             </div>
                         </form>
@@ -254,14 +254,43 @@
                 calculaPrecoDaEstadia(dataCheckIN, dataCheckOUT);
             });
 
-            // Adiciona o evento de envio ao formulário
-            document.getElementById("reservaForm").addEventListener("submit", function (event) {
-                const valorPago = parseFloat(document.getElementById("ValorPagoAux").value);
-                if (valorPago > valorTotal) {
-                    event.preventDefault(); // Impede o envio do formulário
-                    alert("O valor pago não pode ser superior ao valor total.");
+            
+            // Adiciona o evento de clique ao botão de submissão
+            document.querySelector("#buttonsubmit").addEventListener("click", function (event) {
+
+                // Verifica se existe pelo menos um serviço selecionado
+                if (document.querySelectorAll('.servicos-selecionados:checked').length === 0) {
+                    alert("Por favor, selecione pelo menos um serviço.");
+                    event.preventDefault();
                 }
+
+                // verificar se o valor pago é superior ao valor total
+                if (parseFloat(document.getElementById("ValorPagoAux").value) > valorTotal) {
+                    alert("O valor pago não pode ser superior ao valor total da reserva.");
+                    event.preventDefault();
+                }
+
+                //verifica se tem algum quarto selecionado
+                if (document.getElementById("QuartoFK").value == "-1") {
+                    alert("Por favor, selecione um quarto.");
+                    event.preventDefault();
+                }
+                
+                // verifica se a data de check In é depois da data de Check Out
+                if (new Date(dataCheckIN.value) >= new Date(dataCheckOUT.value)) {
+                    alert("A data de check-in deve ser anterior à data de check-out.");
+                    event.preventDefault();
+                }
+
+                // Verifica se foi selecionado um hospede
+                if (document.getElementById("HospedeId").value == "-1") {
+                    alert("Por favor, selecione um hospede.");
+                    event.preventDefault();
+                }
+
             });
+
+
         });
     </script>
 }

@@ -29,10 +29,11 @@ namespace HOTEL360___Trabalho_final.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-
+        // GET: api/<ApiQuartosController>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            // retorna a lista de quartos
             return Ok(await _context.Quartos.ToListAsync());
         }
 
@@ -41,13 +42,14 @@ namespace HOTEL360___Trabalho_final.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
-
+            // procura o quarto cujo ID é fornecido
             var quarto = await _context.Quartos
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            // caso o quarto não for encontrado
             if (quarto == null)
             {
-                return NotFound(new { erro = "Quarto nao encontrado" });
+                return NotFound(new { erro = "Quarto não encontrado" });
             }
 
             return Ok(quarto);
@@ -171,7 +173,6 @@ namespace HOTEL360___Trabalho_final.Controllers
             }
 
             //se chegou aqui é porque algo não correu bem
-            //volta à View com os dados fornecidos pela View
             return Ok(quarto);
         }
 
@@ -180,10 +181,13 @@ namespace HOTEL360___Trabalho_final.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromForm] Quartos quarto, [FromForm] IFormFile ImagemLogo)
         {
+           // procura o quarto cujo ID é fornecido
             var quartoGuardado = await _context.Quartos.FindAsync(id);
+
+            // caso o quarto não for encontrado
             if (quartoGuardado == null)
             {
-                return NotFound(new { erro = "Quarto nao encontrado" });
+                return NotFound(new { erro = "Quarto não encontrado" });
             }
 
             string nomeImagem = "";
@@ -216,13 +220,16 @@ namespace HOTEL360___Trabalho_final.Controllers
             }
             try
             {
+                // guarda os dados do quarto
+                quartoGuardado.Localizacao = quarto.Localizacao;
                 quartoGuardado.Nome = quarto.Nome;
                 quartoGuardado.Descricao = quarto.Descricao;
                 quartoGuardado.PrecoAux = quarto.PrecoAux;
                 quartoGuardado.Preco = Convert.ToDecimal(quarto.PrecoAux.Replace('.', ','));
                 quartoGuardado.Capacidade = quarto.Capacidade;
+
+                // atualiza os dados do quarto na BD
                 _context.Update(quartoGuardado);
-                //adiciona os dados vindos da View à BD 
 
                 //efetua COMMIT na BD
                 await _context.SaveChangesAsync();
@@ -265,17 +272,23 @@ namespace HOTEL360___Trabalho_final.Controllers
             }
         }
 
+
         // DELETE api/<ApiQuartosController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            // procura o quarto cujo ID é fornecido
             var quarto = await _context.Quartos.FindAsync(id);
+
+            // caso o quarto não for encontrado
             if (quarto == null)
             {
-                return NotFound(new { erro = "Quarto nao encontrado" });
+                return NotFound(new { erro = "Quarto não encontrado" });
             }
 
+            // remove o quarto da BD
             var quartos = _context.Quartos.Remove(quarto);
+            //efetua COMMIT na BD
             await _context.SaveChangesAsync();
 
             return Ok(new { successo = true });

@@ -35,6 +35,7 @@ namespace HOTEL360___Trabalho_final.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            // retorna a lista de servicos
             return Ok(await _context.Servicos.ToListAsync());
         }
 
@@ -42,13 +43,17 @@ namespace HOTEL360___Trabalho_final.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
+            // verifica se o ID é nulo
             if (id == null)
             {
                 return NotFound();
             }
 
+            // procura o servico cujo ID é fornecido
             var reservas = await _context.Servicos
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            // caso o servico não for encontrado
             if (reservas == null)
             {
                 return NotFound();
@@ -56,11 +61,13 @@ namespace HOTEL360___Trabalho_final.Controllers
 
             return Ok(reservas);
         }
+
+
         // POST api/<ApiServicosController>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Servicos servico)
         {
-
+            // verifica se os dados fornecidos pela View são válidos
             if (ModelState.IsValid)
             {
 
@@ -93,25 +100,33 @@ namespace HOTEL360___Trabalho_final.Controllers
 
             }
             //se chegou aqui é porque algo não correu bem
-            //volta à View com os dados fornecidos pela View 
-            return BadRequest(new { error = "Informacao incorrecta" });
+            // mostra a mensagem de erro
+            return BadRequest(new { error = "Informação incorreta" });
         }
+
 
 
         // PUT api/<ApiServicosController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Servicos servico)
         {
-
+            //procura o servico cujo ID é fornecido
             var servicoGuardado = await _context.Servicos.FindAsync(id);
-            if (servicoGuardado == null) { return NotFound(new { erro = "Servico nao encontrado" }); }
 
+            // caso o servico não for encontrado
+            if (servicoGuardado == null) { 
+                return NotFound(new { erro = "Serviço não encontrado" }); 
+            }
+
+            // guarda os dados do servico
             servicoGuardado.Nome = servico.Nome;
             servicoGuardado.Descricao = servico.Descricao;
             servicoGuardado.PrecoAux = servico.PrecoAux;
             servicoGuardado.Preco = servico.Preco;
 
+            // atualiza os dados do servico na BD
             _context.Update(servicoGuardado);
+            // efetua COMMIT na BD
             await _context.SaveChangesAsync();
 
             return Ok(servicoGuardado);
@@ -121,11 +136,17 @@ namespace HOTEL360___Trabalho_final.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-
+            // procura o servico cujo ID é fornecido
             var resersa = await _context.Servicos.FindAsync(id);
-            if (resersa == null) { return NotFound(new { erro = "Servico nao encontrado" }); }
 
+            // caso o servico não for encontrado
+            if (resersa == null) { 
+                return NotFound(new { erro = "Servico nao encontrado" }); 
+            }
+
+            // remove o servico da BD
             _context.Remove(resersa);
+            // efetua COMMIT na BD
             await _context.SaveChangesAsync();
             return Ok(new { sucesso = true });
         }

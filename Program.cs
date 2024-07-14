@@ -18,7 +18,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddAntiforgery(options => { options.SuppressXFrameOptionsHeader = true; });
 builder.Services.AddControllers().AddJsonOptions(x =>
-   x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+{
+
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    x.JsonSerializerOptions.WriteIndented = true;
+}
+    );
 // referência ao serviço do Microsoft Identity
 // que faz a AUTENTICAÇÃO 
 builder.Services.AddAuthorization();
@@ -58,6 +63,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -66,9 +72,7 @@ app.UseRouting();
 app.MapIdentityApi<IdentityUser>();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();

@@ -475,34 +475,15 @@ namespace HOTEL360___Trabalho_final.Controllers
             {
                 return NotFound();
             }
-            reserva.HospedeId = reservaGuardada.HospedeId;
-            // Se a DataCheckIN e DataCheckOUT não chegaram como "01/01/0001 00:00:00"
-            if (reserva.DataCheckIN != DateTime.MinValue && reserva.DataCheckOUT != DateTime.MinValue)   {
-                reservaGuardada.ValorPago = reserva.ValorPago;
-                reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
-                reservaGuardada.DataCheckIN = reserva.DataCheckIN;
-                reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
-                reservaGuardada.QuartoFK = reserva.QuartoFK;
 
-            }
-            if (reserva.DataCheckIN == DateTime.MinValue && reserva.DataCheckOUT != DateTime.MinValue) {
-                reservaGuardada.ValorPago = reserva.ValorPago;
-                reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
-                reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
+            if (reserva.QuartoFK > 0){
                 reservaGuardada.QuartoFK = reserva.QuartoFK;
-
             }
-            if (reserva.DataCheckIN != DateTime.MinValue && reserva.DataCheckOUT == DateTime.MinValue)
-            {
-                reservaGuardada.ValorPago = reserva.ValorPago;
-                reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
-                reservaGuardada.DataCheckIN = reserva.DataCheckIN;
-                reservaGuardada.QuartoFK = reserva.QuartoFK;
-
-            }
+            reserva.HospedeId = reservaGuardada.HospedeId;            
+            reservaGuardada.DataCheckIN = reserva.DataCheckIN;
+            reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
             reservaGuardada.ValorPago = reserva.ValorPago;
             reservaGuardada.ValorPagoAux = reserva.ValorPagoAux;
-            reservaGuardada.QuartoFK = reserva.QuartoFK;
 
 
             if (ModelState.IsValid)
@@ -574,28 +555,12 @@ namespace HOTEL360___Trabalho_final.Controllers
                     // atribuir a lista de serviços à Reserva
                     reservaGuardada.ListaServicos = listaServicosNaRes;
 
-
-                    // Calcula o nº de noites no hotel 
-                    TimeSpan duracao = reservaGuardada.DataCheckOUT - reservaGuardada.DataCheckIN;
-                    int numeroDeNoites = (int)duracao.TotalDays;
-
-                    // Procura o objeto Quartos utilizando o Id (QuartoFK) da reserva
-                    var quarto = _context.Quartos.FirstOrDefault(q => q.Id == reservaGuardada.QuartoFK);
-
-                    // Calcular o valor do quarto
-                    decimal valorQuarto = numeroDeNoites * quarto.Preco;
-
-                    // Calcular o valor dos serviços
-                    decimal valorServicos = 0;
-                    foreach (var serv in reservaGuardada.ListaServicos) {
-                        valorServicos += serv.Preco * numeroDeNoites;
-                    }
-
                     // Calcular o ValorTotal
-                    reservaGuardada.ValorTotal = valorQuarto + valorServicos;
+                    reservaGuardada.ValorTotal = CalcularValorTotal(reservaGuardada);
 
                     // Calcula o valor que ainda falta pagar
                     reservaGuardada.ValorAPagar = reservaGuardada.ValorTotal - reservaGuardada.ValorPago;
+
 
                     // Verifica se o Valor Pago é superior ao Valor Total
                     if (reservaGuardada.ValorPago > reservaGuardada.ValorTotal)

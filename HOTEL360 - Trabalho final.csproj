@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\ApiUtilizadores.cs" />
+    <Compile Remove="Controllers\ValuesController.cs" />
+    <Compile Remove="Models\CriarUtilizadores - Copy.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\Imagens\bemvindo2.png" />
   </ItemGroup>
 
