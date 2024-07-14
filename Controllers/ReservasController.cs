@@ -122,7 +122,7 @@ namespace HOTEL360___Trabalho_final.Controllers
                 ViewData["HospedeId"] = new SelectList(_context.Hospedes.OrderBy(q => q.Nome), "Id", "Nome");
 
             }
-                        
+
             var lista = new List<object>();
 
             // Obter a lista de quartos incluindo a lista de reservas
@@ -204,7 +204,7 @@ namespace HOTEL360___Trabalho_final.Controllers
                 // Caso seja um Hospede então associa o seu Id à Reserva
                 var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var utilizador = await _context.Utilizadores
-               .FirstOrDefaultAsync(m => m.UserId == user);
+                        .FirstOrDefaultAsync(m => m.UserId == user);
                 reserva.HospedeId = utilizador.Id;
             }
 
@@ -311,7 +311,8 @@ namespace HOTEL360___Trabalho_final.Controllers
                     reserva.ValorAPagar = reserva.ValorTotal - reserva.ValorPago;
 
                     //Verifica se o Valor Pago é superior ao Valor Total
-                    if (reserva.ValorPago > reserva.ValorTotal){
+                    if (reserva.ValorPago > reserva.ValorTotal)
+                    {
                         ModelState.AddModelError("", "O Valor Pago não pode ser superior ao valor Total!");
 
                         // Recarregar as listas e devolve o controlo à View
@@ -476,10 +477,11 @@ namespace HOTEL360___Trabalho_final.Controllers
                 return NotFound();
             }
 
-            if (reserva.QuartoFK > 0){
+            if (reserva.QuartoFK > 0)
+            {
                 reservaGuardada.QuartoFK = reserva.QuartoFK;
             }
-            reserva.HospedeId = reservaGuardada.HospedeId;            
+            reserva.HospedeId = reservaGuardada.HospedeId;
             reservaGuardada.DataCheckIN = reserva.DataCheckIN;
             reservaGuardada.DataCheckOUT = reserva.DataCheckOUT;
             reservaGuardada.ValorPago = reserva.ValorPago;

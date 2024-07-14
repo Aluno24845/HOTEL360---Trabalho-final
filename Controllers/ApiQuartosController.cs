@@ -2,6 +2,8 @@
 using HOTEL360___Trabalho_final.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Dynamic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,6 +37,31 @@ namespace HOTEL360___Trabalho_final.Controllers
         {
             // retorna a lista de quartos
             return Ok(await _context.Quartos.ToListAsync());
+        }
+
+        [HttpGet("disponivel", Name = "disponivel")]
+        public async Task<IActionResult> GetDisponivel([FromQuery] DateTime ate, [FromQuery] DateTime de)
+        {
+
+            var quartosDisponiveis = await _context.Quartos
+                .Include(q => q.ListaReservas)
+                .Where(q => q.ListaReservas.Count == 0
+                || (!q.ListaReservas.Any(r =>
+
+                (de >= r.DataCheckIN && de < r.DataCheckOUT)
+                || (ate > r.DataCheckIN && ate <= r.DataCheckOUT)
+                 || (de <= r.DataCheckIN && ate >= r.DataCheckOUT)
+
+                )))
+                .ToListAsync();
+
+            // Remover as listas de Reservas e Hospedes para evitar referências cíclicas
+            foreach (var r in quartosDisponiveis)
+            {
+                r.ListaReservas = null;
+            }
+
+            return Ok(quartosDisponiveis);
         }
 
 
@@ -181,7 +208,7 @@ namespace HOTEL360___Trabalho_final.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromForm] Quartos quarto, [FromForm] IFormFile ImagemLogo)
         {
-           // procura o quarto cujo ID é fornecido
+            // procura o quarto cujo ID é fornecido
             var quartoGuardado = await _context.Quartos.FindAsync(id);
 
             // caso o quarto não for encontrado
